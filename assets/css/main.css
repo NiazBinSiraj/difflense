@@ -38,6 +38,33 @@
     width: 100%;
 }
 
+/* Unified view specific styles */
+.diff-viewer:not(.side-by-side-container) {
+    overflow-x: auto;
+}
+
+.unified-file-container {
+    overflow-x: auto;
+    margin-bottom: 1rem;
+    border: 1px solid #e5e7eb;
+    border-radius: 0.5rem;
+    background-color: #ffffff;
+}
+
+.unified-file-container:last-child {
+    margin-bottom: 0;
+}
+
+.diff-viewer:not(.side-by-side-container) .diff-line {
+    min-width: max-content;
+}
+
+.diff-viewer:not(.side-by-side-container) .diff-line-content {
+    white-space: pre;
+    overflow: visible;
+    min-width: max-content;
+}
+
 .diff-line {
     display: flex;
     align-items: flex-start;
@@ -68,12 +95,17 @@
     padding: 0.25rem 1rem;
     flex: 1;
     white-space: pre;
-    overflow-x: auto;
     font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', 'Consolas', 'source-code-pro', monospace;
     height: 1.125rem;
     line-height: 1.125rem;
     display: flex;
     align-items: center;
+    overflow: visible;
+}
+
+/* Side-by-side specific adjustments for line content */
+.side-by-side-panel .diff-line-content {
+    overflow-x: auto;
 }
 
 .diff-line-added {

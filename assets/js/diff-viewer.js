@@ -226,12 +226,15 @@ window.DiffViewer = {
         let html = '';
 
         diffData.files.forEach(file => {
+            html += '<div class="unified-file-container">';
             html += this.renderFileHeader(file);
             
             file.hunks.forEach(hunk => {
                 html += this.renderHunkHeader(hunk);
                 html += this.renderHunkLinesUnified(hunk);
             });
+            
+            html += '</div>';
         });
 
         return html;
