@@ -42,6 +42,8 @@
     display: flex;
     align-items: flex-start;
     border-left: 4px solid transparent;
+    min-height: 1.5rem;
+    height: 1.5rem;
 }
 
 .diff-line-number {
@@ -52,8 +54,14 @@
     user-select: none;
     border-right: 1px solid #e5e7eb;
     min-width: 60px;
+    width: 60px;
     text-align: right;
     font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', 'Consolas', 'source-code-pro', monospace;
+    height: 1.125rem;
+    line-height: 1.125rem;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
 }
 
 .diff-line-content {
@@ -62,6 +70,10 @@
     white-space: pre;
     overflow-x: auto;
     font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', 'Consolas', 'source-code-pro', monospace;
+    height: 1.125rem;
+    line-height: 1.125rem;
+    display: flex;
+    align-items: center;
 }
 
 .diff-line-added {
@@ -114,6 +126,27 @@
     color: #374151;
 }
 
+.diff-line-empty {
+    background-color: #ffffff;
+    border-left-color: #e5e7eb;
+    min-height: 1.5rem;
+    height: 1.5rem;
+}
+
+.diff-line-empty .diff-line-number {
+    background-color: #f3f4f6;
+    color: #d1d5db;
+    min-height: 1.125rem;
+    height: 1.125rem;
+}
+
+.diff-line-empty .diff-line-content {
+    background-color: #ffffff;
+    min-height: 1.125rem;
+    height: 1.125rem;
+    line-height: 1.125rem;
+}
+
 /* File header styling */
 .diff-file-header {
     background-color: #1f2937;
@@ -138,19 +171,37 @@
 /* Side-by-side view specific styles */
 .side-by-side-container {
     display: grid;
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    grid-template-columns: 1fr 1fr;
     gap: 1px;
     background-color: #d1d5db;
-    overflow-x: auto;
-    min-width: 100%;
-    width: max-content;
-    min-width: 800px;
+    width: 100%;
 }
 
 .side-by-side-panel {
     background-color: #ffffff;
     overflow-x: auto;
-    min-width: 400px;
+    overflow-y: hidden;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+.side-by-side-content {
+    width: 100%;
+    min-width: max-content;
+    flex: 1;
+}
+
+/* Side-by-side specific diff line adjustments */
+.side-by-side-panel .diff-line {
+    min-width: max-content;
+    width: 100%;
+}
+
+.side-by-side-panel .diff-line-content {
+    min-width: 200px;
+    flex: 1;
+    white-space: pre;
 }
 
 .side-by-side-header {
@@ -160,6 +211,7 @@
     font-size: 0.875rem;
     color: #374151;
     border-bottom: 1px solid #e5e7eb;
+    flex-shrink: 0;
 }
 
 /* Responsive design for side-by-side */

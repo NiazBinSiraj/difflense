@@ -243,33 +243,56 @@ window.DiffViewer = {
     renderSideBySideView(diffData) {
         let html = '<div class="side-by-side-container">';
         
-        // Left panel header
-        html += '<div class="side-by-side-header bg-red-50 text-red-800 border-r border-gray-300">';
+        // Headers
+        html += '<div class="side-by-side-header bg-red-50 text-red-800">';
         html += '<span class="font-mono text-sm">- Original</span>';
         html += '</div>';
-        
-        // Right panel header
         html += '<div class="side-by-side-header bg-green-50 text-green-800">';
         html += '<span class="font-mono text-sm">+ Modified</span>';
         html += '</div>';
+        
+        // Content panels
+        html += '<div class="side-by-side-panel" id="left-panel">';
+        html += '<div class="side-by-side-content">';
+        
+        html += '</div></div>';
+        html += '<div class="side-by-side-panel" id="right-panel">';
+        html += '<div class="side-by-side-content">';
+
+        // Build synchronized content
+        let leftContent = '';
+        let rightContent = '';
 
         diffData.files.forEach(file => {
             const sideBySideData = this.prepareSideBySideData(file);
             
-            // Left panel (original)
-            html += '<div class="side-by-side-panel">';
-            html += this.renderFileHeader(file, 'original');
-            html += this.renderSideBySidePanel(sideBySideData.original, 'original');
-            html += '</div>';
+            // Add file headers
+            leftContent += this.renderFileHeader(file, 'original');
+            rightContent += this.renderFileHeader(file, 'modified');
             
-            // Right panel (modified)
-            html += '<div class="side-by-side-panel">';
-            html += this.renderFileHeader(file, 'modified');
-            html += this.renderSideBySidePanel(sideBySideData.modified, 'modified');
-            html += '</div>';
+            // Add content ensuring same number of lines
+            const maxLines = Math.max(sideBySideData.original.length, sideBySideData.modified.length);
+            
+            for (let i = 0; i < maxLines; i++) {
+                const leftLine = sideBySideData.original[i] || { type: 'empty', content: '', side: 'original' };
+                const rightLine = sideBySideData.modified[i] || { type: 'empty', content: '', side: 'modified' };
+                
+                leftContent += this.renderSingleLine(leftLine, 'original');
+                rightContent += this.renderSingleLine(rightLine, 'modified');
+            }
         });
 
+        // Insert content and close
+        html = html.replace('<div class="side-by-side-content">', '<div class="side-by-side-content">' + leftContent);
+        html += rightContent + '</div></div>';
         html += '</div>';
+        
+        // Add scroll synchronization after rendering
+        setTimeout(() => {
+            this.setupScrollSync();
+            this.synchronizeHeights();
+        }, 100);
+        
         return html;
     },
 
@@ -299,6 +322,15 @@ window.DiffViewer = {
             });
         });
 
+        // Ensure both arrays have the same length
+        const maxLength = Math.max(original.length, modified.length);
+        while (original.length < maxLength) {
+            original.push({ type: 'empty', content: '', side: 'original' });
+        }
+        while (modified.length < maxLength) {
+            modified.push({ type: 'empty', content: '', side: 'modified' });
+        }
+
         return { original, modified };
     },
 
@@ -309,21 +341,28 @@ window.DiffViewer = {
         let html = '';
         
         lines.forEach(line => {
-            if (line.type === 'empty') {
-                html += '<div class="diff-line diff-line-empty">';
-                html += '<div class="diff-line-number"></div>';
-                html += '<div class="diff-line-content"></div>';
-                html += '</div>';
-            } else {
-                const lineClass = this.getDiffLineClass(line.type);
-                html += `<div class="diff-line ${lineClass}">`;
-                html += `<div class="diff-line-number">${this.getLineNumber(line, side)}</div>`;
-                html += `<div class="diff-line-content">${this.escapeHtml(line.content)}</div>`;
-                html += '</div>';
-            }
+            html += this.renderSingleLine(line, side);
         });
 
         return html;
+    },
+
+    /**
+     * Render a single line for side-by-side view
+     */
+    renderSingleLine(line, side) {
+        if (line.type === 'empty') {
+            return '<div class="diff-line diff-line-empty">' +
+                   '<div class="diff-line-number"></div>' +
+                   '<div class="diff-line-content">&nbsp;</div>' +
+                   '</div>';
+        } else {
+            const lineClass = this.getDiffLineClass(line.type);
+            return `<div class="diff-line ${lineClass}">` +
+                   `<div class="diff-line-number">${this.getLineNumber(line, side)}</div>` +
+                   `<div class="diff-line-content">${this.escapeHtml(line.content)}</div>` +
+                   '</div>';
+        }
     },
 
     /**
@@ -571,5 +610,64 @@ window.DiffViewer = {
         const div = document.createElement('div');
         div.textContent = text;
         return div.innerHTML;
+    },
+
+    /**
+     * Setup synchronized scrolling for side-by-side panels
+     */
+    setupScrollSync() {
+        const leftPanel = document.getElementById('left-panel');
+        const rightPanel = document.getElementById('right-panel');
+        
+        if (!leftPanel || !rightPanel) {
+            return;
+        }
+
+        let isScrolling = false;
+
+        // Sync right panel when left panel scrolls
+        leftPanel.addEventListener('scroll', () => {
+            if (isScrolling) return;
+            isScrolling = true;
+            rightPanel.scrollLeft = leftPanel.scrollLeft;
+            requestAnimationFrame(() => {
+                isScrolling = false;
+            });
+        });
+
+        // Sync left panel when right panel scrolls
+        rightPanel.addEventListener('scroll', () => {
+            if (isScrolling) return;
+            isScrolling = true;
+            leftPanel.scrollLeft = rightPanel.scrollLeft;
+            requestAnimationFrame(() => {
+                isScrolling = false;
+            });
+        });
+    },
+
+    /**
+     * Synchronize heights of side-by-side panels
+     */
+    synchronizeHeights() {
+        const leftPanel = document.getElementById('left-panel');
+        const rightPanel = document.getElementById('right-panel');
+        
+        if (!leftPanel || !rightPanel) {
+            return;
+        }
+
+        // Reset any forced heights
+        leftPanel.style.height = 'auto';
+        rightPanel.style.height = 'auto';
+
+        // Force a reflow to get natural heights
+        const leftHeight = leftPanel.offsetHeight;
+        const rightHeight = rightPanel.offsetHeight;
+
+        // Set both panels to the maximum height
+        const maxHeight = Math.max(leftHeight, rightHeight);
+        leftPanel.style.height = maxHeight + 'px';
+        rightPanel.style.height = maxHeight + 'px';
     }
 };
