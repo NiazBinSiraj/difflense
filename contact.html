@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact - DiffLens</title>
+    <meta name="description" content="Contact DiffLens - Get in touch with us for support, feedback, or collaboration">
+    
+    <!-- TailwindCSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Custom Tailwind Config -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'primary': '#2563eb',
+                        'primary-dark': '#1d4ed8'
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="assets/css/main.css">
+</head>
+<body class="bg-gray-50">
+    <!-- Navigation -->
+    <nav class="bg-white shadow-sm fixed top-0 left-0 right-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <!-- Logo -->
+                <div class="flex items-center">
+                    <div class="flex-shrink-0 flex items-center">
+                        <svg class="h-8 w-8 text-primary mr-2" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M8 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h3c.6 0 1-.4 1-1s-.4-1-1-1H5V5h3c.6 0 1-.4 1-1s-.4-1-1-1zm7.5 17l1.1-1.1L14.7 17H21v-2h-6.3l1.9-1.9L15.5 12l-3.5 3.5v1L15.5 20z"/>
+                        </svg>
+                        <span class="text-xl font-bold text-gray-900">DiffLens</span>
+                    </div>
+                </div>
+
+                <!-- Desktop Navigation -->
+                <div class="hidden md:block">
+                    <div class="flex items-baseline space-x-4">
+                        <a href="index.html" class="nav-link px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-primary hover:bg-primary/5 transition-colors">Home</a>
+                        <a href="diff-view.html" class="nav-link px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-primary hover:bg-primary/5 transition-colors">Diff View</a>
+                        <a href="contribute.html" class="nav-link px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-primary hover:bg-primary/5 transition-colors">Contribute</a>
+                        <a href="about.html" class="nav-link px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-primary hover:bg-primary/5 transition-colors">About</a>
+                        <a href="contact.html" class="nav-link px-3 py-2 rounded-md text-sm font-medium text-primary bg-primary/10">Contact</a>
+                    </div>
+                </div>
+
+                <!-- GitHub Link -->
+                <div class="hidden md:flex items-center space-x-4">
+                    <a href="https://github.com/NiazBinSiraj/difflense" target="_blank" rel="noopener noreferrer" 
+                       class="flex items-center text-gray-700 hover:text-primary transition-colors">
+                        <svg class="h-5 w-5 mr-1" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/>
+                        </svg>
+                        <span id="github-stars" class="text-sm">★ Stars</span>
+                    </a>
+                </div>
+
+                <!-- Mobile menu button -->
+                <div class="md:hidden">
+                    <button id="mobile-menu-btn" class="text-gray-700 hover:text-primary focus:outline-none focus:text-primary">
+                        <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mobile Navigation -->
+        <div id="mobile-menu" class="md:hidden hidden bg-white border-t border-gray-200">
+            <div class="px-2 pt-2 pb-3 space-y-1">
+                <a href="index.html" class="mobile-nav-link block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-primary hover:bg-primary/5">Home</a>
+                <a href="diff-view.html" class="mobile-nav-link block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-primary hover:bg-primary/5">Diff View</a>
+                <a href="contribute.html" class="mobile-nav-link block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-primary hover:bg-primary/5">Contribute</a>
+                <a href="about.html" class="mobile-nav-link block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-primary hover:bg-primary/5">About</a>
+                <a href="contact.html" class="mobile-nav-link block px-3 py-2 rounded-md text-base font-medium text-primary bg-primary/10">Contact</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="pt-16 min-h-screen">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+            <div class="text-center mb-12">
+                <h1 class="text-4xl font-bold text-gray-900 mb-4">Get in Touch</h1>
+                <p class="text-lg text-gray-600">
+                    Have questions, feedback, or want to collaborate? We'd love to hear from you!
+                </p>
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-8 mb-8">
+                <!-- Contact Information -->
+                <div class="bg-white rounded-lg shadow-lg p-8">
+                    <h2 class="text-2xl font-bold text-gray-900 mb-6">Contact Information</h2>
+                    
+                    <div class="space-y-6">
+                        <div class="flex items-start">
+                            <div class="bg-primary/10 p-3 rounded-full mr-4">
+                                <svg class="h-6 w-6 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/>
+                                </svg>
+                            </div>
+                            <div>
+                                <h3 class="text-lg font-semibold text-gray-900 mb-1">GitHub Issues</h3>
+                                <p class="text-gray-600 mb-2">
+                                    For bug reports, feature requests, and technical discussions.
+                                </p>
+                                <a href="https://github.com/NiazBinSiraj/difflense/issues" target="_blank" rel="noopener noreferrer" 
+                                   class="text-primary hover:text-primary-dark">
+                                    Open an Issue →
+                                </a>
+                            </div>
+                        </div>
+
+                        <div class="flex items-start">
+                            <div class="bg-primary/10 p-3 rounded-full mr-4">
+                                <svg class="h-6 w-6 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
+                                </svg>
+                            </div>
+                            <div>
+                                <h3 class="text-lg font-semibold text-gray-900 mb-1">Discussions</h3>
+                                <p class="text-gray-600 mb-2">
+                                    Join our community discussions for questions and ideas.
+                                </p>
+                                <a href="https://github.com/NiazBinSiraj/difflense/discussions" target="_blank" rel="noopener noreferrer" 
+                                   class="text-primary hover:text-primary-dark">
+                                    Start a Discussion →
+                                </a>
+                            </div>
+                        </div>
+
+                        <div class="flex items-start">
+                            <div class="bg-primary/10 p-3 rounded-full mr-4">
+                                <svg class="h-6 w-6 text-primary" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/>
+                                </svg>
+                            </div>
+                            <div>
+                                <h3 class="text-lg font-semibold text-gray-900 mb-1">Repository</h3>
+                                <p class="text-gray-600 mb-2">
+                                    View source code, contribute, or star the project.
+                                </p>
+                                <a href="https://github.com/NiazBinSiraj/difflense" target="_blank" rel="noopener noreferrer" 
+                                   class="text-primary hover:text-primary-dark">
+                                    View Repository →
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Contact Form -->
+                <div class="bg-white rounded-lg shadow-lg p-8">
+                    <h2 class="text-2xl font-bold text-gray-900 mb-6">Send a Message</h2>
+                    
+                    <form id="contact-form" class="space-y-6">
+                        <div>
+                            <label for="name" class="block text-sm font-medium text-gray-700 mb-2">
+                                Name *
+                            </label>
+                            <input type="text" id="name" name="name" required
+                                   class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-primary focus:border-primary">
+                        </div>
+
+                        <div>
+                            <label for="email" class="block text-sm font-medium text-gray-700 mb-2">
+                                Email *
+                            </label>
+                            <input type="email" id="email" name="email" required
+                                   class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-primary focus:border-primary">
+                        </div>
+
+                        <div>
+                            <label for="subject" class="block text-sm font-medium text-gray-700 mb-2">
+                                Subject *
+                            </label>
+                            <select id="subject" name="subject" required
+                                    class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-primary focus:border-primary">
+                                <option value="">Select a subject</option>
+                                <option value="bug-report">Bug Report</option>
+                                <option value="feature-request">Feature Request</option>
+                                <option value="collaboration">Collaboration</option>
+                                <option value="general">General Inquiry</option>
+                                <option value="other">Other</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label for="message" class="block text-sm font-medium text-gray-700 mb-2">
+                                Message *
+                            </label>
+                            <textarea id="message" name="message" rows="5" required
+                                      class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-primary focus:border-primary"
+                                      placeholder="Tell us more about your inquiry..."></textarea>
+                        </div>
+
+                        <div class="bg-yellow-50 border border-yellow-200 rounded-md p-4">
+                            <div class="flex">
+                                <div class="flex-shrink-0">
+                                    <svg class="h-5 w-5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
+                                    </svg>
+                                </div>
+                                <div class="ml-3">
+                                    <p class="text-sm text-yellow-700">
+                                        <strong>Note:</strong> This is a demo form. For real inquiries, please use GitHub Issues or Discussions above.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="w-full btn-primary">
+                            Send Message
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- FAQ Section -->
+            <div class="bg-white rounded-lg shadow-lg p-8 mb-8">
+                <h2 class="text-2xl font-bold text-gray-900 mb-6">Frequently Asked Questions</h2>
+                
+                <div class="space-y-6">
+                    <div>
+                        <h3 class="text-lg font-semibold text-gray-900 mb-2">Is DiffLens really free?</h3>
+                        <p class="text-gray-600">
+                            Yes! DiffLens is completely free and open source. You can use it, modify it, and distribute it 
+                            under the terms of our open source license.
+                        </p>
+                    </div>
+
+                    <div>
+                        <h3 class="text-lg font-semibold text-gray-900 mb-2">How do you handle my code/data?</h3>
+                        <p class="text-gray-600">
+                            DiffLens processes everything client-side in your browser. Your code never leaves your machine 
+                            or gets transmitted to any server. This ensures complete privacy and security.
+                        </p>
+                    </div>
+
+                    <div>
+                        <h3 class="text-lg font-semibold text-gray-900 mb-2">Can I contribute to the project?</h3>
+                        <p class="text-gray-600">
+                            Absolutely! We welcome contributions of all kinds. Check out our 
+                            <a href="contribute.html" class="text-primary hover:text-primary-dark">contribute page</a> 
+                            for guidelines on how to get started.
+                        </p>
+                    </div>
+
+                    <div>
+                        <h3 class="text-lg font-semibold text-gray-900 mb-2">What diff formats are supported?</h3>
+                        <p class="text-gray-600">
+                            Currently, DiffLens supports standard git diff format. We're working on adding support for 
+                            other formats like unified diff, context diff, and more.
+                        </p>
+                    </div>
+
+                    <div>
+                        <h3 class="text-lg font-semibold text-gray-900 mb-2">How can I report a bug?</h3>
+                        <p class="text-gray-600">
+                            The best way to report bugs is through our 
+                            <a href="https://github.com/NiazBinSiraj/difflense/issues" target="_blank" rel="noopener noreferrer" 
+                               class="text-primary hover:text-primary-dark">GitHub Issues</a>. 
+                            Please include as much detail as possible to help us reproduce and fix the issue.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Community -->
+            <div class="bg-primary/5 rounded-lg p-6">
+                <h2 class="text-xl font-bold text-gray-900 mb-4">Join Our Community</h2>
+                <p class="text-gray-600 mb-4">
+                    Connect with other developers, share feedback, and help shape the future of DiffLens.
+                </p>
+                <div class="flex flex-col sm:flex-row gap-4">
+                    <a href="https://github.com/NiazBinSiraj/difflense/discussions" target="_blank" rel="noopener noreferrer" 
+                       class="btn-primary">
+                        Join Discussions
+                    </a>
+                    <a href="https://github.com/NiazBinSiraj/difflense" target="_blank" rel="noopener noreferrer" 
+                       class="btn-outline">
+                        Star on GitHub
+                    </a>
+                    <a href="contribute.html" class="btn-outline">
+                        Start Contributing
+                    </a>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-white py-8">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center">
+                <div class="flex justify-center items-center mb-4">
+                    <svg class="h-8 w-8 text-white mr-2" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M8 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h3c.6 0 1-.4 1-1s-.4-1-1-1H5V5h3c.6 0 1-.4 1-1s-.4-1-1-1zm7.5 17l1.1-1.1L14.7 17H21v-2h-6.3l1.9-1.9L15.5 12l-3.5 3.5v1L15.5 20z"/>
+                    </svg>
+                    <span class="text-xl font-bold">DiffLens</span>
+                </div>
+                <div class="flex justify-center space-x-6 mb-6">
+                    <a href="index.html" class="text-gray-400 hover:text-white transition-colors">Home</a>
+                    <a href="about.html" class="text-gray-400 hover:text-white transition-colors">About</a>
+                    <a href="contribute.html" class="text-gray-400 hover:text-white transition-colors">Contribute</a>
+                    <a href="https://github.com/NiazBinSiraj/difflense" target="_blank" rel="noopener noreferrer" 
+                       class="text-gray-400 hover:text-white transition-colors">GitHub</a>
+                </div>
+                <div class="mt-6 pt-6 border-t border-gray-800">
+                    <p class="text-gray-500 text-xs">
+                        © 2025 DiffLens. Open source project. Built with privacy in mind.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="assets/js/github-integration.js"></script>
+    <script>
+        // Mobile menu toggle and initialization
+        document.addEventListener('DOMContentLoaded', function() {
+            const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+            const mobileMenu = document.getElementById('mobile-menu');
+            
+            if (mobileMenuBtn && mobileMenu) {
+                mobileMenuBtn.addEventListener('click', function() {
+                    mobileMenu.classList.toggle('hidden');
+                });
+            }
+            
+            // Initialize GitHub integration
+            if (window.GitHubIntegration) {
+                window.GitHubIntegration.init();
+            }
+
+            // Handle contact form submission
+            const contactForm = document.getElementById('contact-form');
+            if (contactForm) {
+                contactForm.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    
+                    // Show success message (this is just a demo)
+                    alert('Thank you for your message! This is a demo form. For real inquiries, please use GitHub Issues or Discussions.');
+                    
+                    // Reset form
+                    contactForm.reset();
+                });
+            }
+        });
+    </script>
+</body>
+</html>

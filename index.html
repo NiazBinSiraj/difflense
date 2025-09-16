@@ -54,11 +54,11 @@
                 <!-- Desktop Navigation -->
                 <div class="hidden md:block">
                     <div class="flex items-baseline space-x-4">
-                        <a href="#" data-page="home" class="nav-link px-3 py-2 rounded-md text-sm font-medium text-primary bg-primary/10">Home</a>
-                        <a href="#" data-page="diff-view" class="nav-link px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-primary hover:bg-primary/5 transition-colors">Diff View</a>
-                        <a href="#" data-page="contribute" class="nav-link px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-primary hover:bg-primary/5 transition-colors">Contribute</a>
-                        <a href="#" data-page="about" class="nav-link px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-primary hover:bg-primary/5 transition-colors">About</a>
-                        <a href="#" data-page="contact" class="nav-link px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-primary hover:bg-primary/5 transition-colors">Contact</a>
+                        <a href="index.html" class="nav-link px-3 py-2 rounded-md text-sm font-medium text-primary bg-primary/10">Home</a>
+                        <a href="diff-view.html" class="nav-link px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-primary hover:bg-primary/5 transition-colors">Diff View</a>
+                        <a href="contribute.html" class="nav-link px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-primary hover:bg-primary/5 transition-colors">Contribute</a>
+                        <a href="about.html" class="nav-link px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-primary hover:bg-primary/5 transition-colors">About</a>
+                        <a href="contact.html" class="nav-link px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-primary hover:bg-primary/5 transition-colors">Contact</a>
                     </div>
                 </div>
 
@@ -87,11 +87,11 @@
         <!-- Mobile Navigation -->
         <div id="mobile-menu" class="md:hidden hidden bg-white border-t border-gray-200">
             <div class="px-2 pt-2 pb-3 space-y-1">
-                <a href="#" data-page="home" class="mobile-nav-link block px-3 py-2 rounded-md text-base font-medium text-primary bg-primary/10">Home</a>
-                <a href="#" data-page="diff-view" class="mobile-nav-link block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-primary hover:bg-primary/5">Diff View</a>
-                <a href="#" data-page="contribute" class="mobile-nav-link block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-primary hover:bg-primary/5">Contribute</a>
-                <a href="#" data-page="about" class="mobile-nav-link block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-primary hover:bg-primary/5">About</a>
-                <a href="#" data-page="contact" class="mobile-nav-link block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-primary hover:bg-primary/5">Contact</a>
+                <a href="index.html" class="mobile-nav-link block px-3 py-2 rounded-md text-base font-medium text-primary bg-primary/10">Home</a>
+                <a href="diff-view.html" class="mobile-nav-link block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-primary hover:bg-primary/5">Diff View</a>
+                <a href="contribute.html" class="mobile-nav-link block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-primary hover:bg-primary/5">Contribute</a>
+                <a href="about.html" class="mobile-nav-link block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-primary hover:bg-primary/5">About</a>
+                <a href="contact.html" class="mobile-nav-link block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-primary hover:bg-primary/5">Contact</a>
                 <div class="border-t border-gray-200 pt-2">
                     <a href="https://github.com/NiazBinSiraj/difflense" target="_blank" rel="noopener noreferrer" 
                        class="flex items-center px-3 py-2 text-gray-700 hover:text-primary">
@@ -107,9 +107,172 @@
 
     <!-- Main Content -->
     <main class="pt-16 min-h-screen">
-        <!-- Page Content Container -->
-        <div id="page-content">
-            <!-- Home Page Content will be loaded here -->
+        <!-- Home Page Content -->
+        <div class="relative overflow-hidden">
+            <!-- Hero Section -->
+            <section class="bg-gradient-to-br from-blue-50 to-indigo-100 py-20">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div class="text-center">
+                        <div class="flex justify-center mb-8">
+                            <div class="bg-white p-6 rounded-full shadow-lg">
+                                <svg class="h-16 w-16 text-primary" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M8 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h3c.6 0 1-.4 1-1s-.4-1-1-1H5V5h3c.6 0 1-.4 1-1s-.4-1-1-1zm7.5 17l1.1-1.1L14.7 17H21v-2h-6.3l1.9-1.9L15.5 12l-3.5 3.5v1L15.5 20z"/>
+                                </svg>
+                            </div>
+                        </div>
+                        <h1 class="text-5xl font-bold text-gray-900 mb-6 text-balance">
+                            DiffLens
+                        </h1>
+                        <p class="text-xl text-gray-600 mb-8 max-w-3xl mx-auto text-balance">
+                            A clean, secure, and privacy-focused git diff viewer. Process everything client-side with no data leaving your browser.
+                        </p>
+                        <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                            <a href="diff-view.html" class="btn-primary px-8 py-3 text-lg">
+                                Try Diff Viewer
+                            </a>
+                            <a href="https://github.com/NiazBinSiraj/difflense" target="_blank" rel="noopener noreferrer" 
+                               class="btn-outline px-8 py-3 text-lg inline-flex items-center">
+                                <svg class="h-5 w-5 mr-2" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/>
+                                </svg>
+                                View on GitHub
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Features Section -->
+            <section class="py-20 bg-white">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div class="text-center mb-16">
+                        <h2 class="text-3xl font-bold text-gray-900 mb-4">Why Choose DiffLens?</h2>
+                        <p class="text-lg text-gray-600 max-w-2xl mx-auto">
+                            Built with privacy and security in mind, DiffLens processes all your code diffs locally in your browser.
+                        </p>
+                    </div>
+                    
+                    <div class="grid md:grid-cols-3 gap-8">
+                        <!-- Privacy First -->
+                        <div class="text-center p-6">
+                            <div class="bg-primary/10 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                                <svg class="h-8 w-8 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m0 0v2m0-2h2m-2 0H10m9-7a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                </svg>
+                            </div>
+                            <h3 class="text-xl font-semibold text-gray-900 mb-2">Privacy First</h3>
+                            <p class="text-gray-600">
+                                Your code never leaves your browser. Everything is processed locally with zero data transmission.
+                            </p>
+                        </div>
+
+                        <!-- Fast & Reliable -->
+                        <div class="text-center p-6">
+                            <div class="bg-primary/10 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                                <svg class="h-8 w-8 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                                </svg>
+                            </div>
+                            <h3 class="text-xl font-semibold text-gray-900 mb-2">Fast & Reliable</h3>
+                            <p class="text-gray-600">
+                                Instant diff processing with syntax highlighting and multiple view modes for optimal readability.
+                            </p>
+                        </div>
+
+                        <!-- Open Source -->
+                        <div class="text-center p-6">
+                            <div class="bg-primary/10 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                                <svg class="h-8 w-8 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
+                                </svg>
+                            </div>
+                            <h3 class="text-xl font-semibold text-gray-900 mb-2">Open Source</h3>
+                            <p class="text-gray-600">
+                                Completely open source and transparent. Audit the code, contribute, or fork for your needs.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- How It Works Section -->
+            <section class="py-20 bg-gray-50">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div class="text-center mb-16">
+                        <h2 class="text-3xl font-bold text-gray-900 mb-4">How It Works</h2>
+                        <p class="text-lg text-gray-600 max-w-2xl mx-auto">
+                            Simple, secure, and straightforward. Get beautiful diff visualizations in just a few steps.
+                        </p>
+                    </div>
+                    
+                    <div class="grid md:grid-cols-4 gap-8">
+                        <!-- Step 1 -->
+                        <div class="text-center">
+                            <div class="bg-primary text-white w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-4 text-xl font-bold">
+                                1
+                            </div>
+                            <h3 class="text-lg font-semibold text-gray-900 mb-2">Paste or Upload</h3>
+                            <p class="text-gray-600 text-sm">
+                                Copy your git diff output or upload a diff file directly to the viewer.
+                            </p>
+                        </div>
+
+                        <!-- Step 2 -->
+                        <div class="text-center">
+                            <div class="bg-primary text-white w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-4 text-xl font-bold">
+                                2
+                            </div>
+                            <h3 class="text-lg font-semibold text-gray-900 mb-2">Choose View Mode</h3>
+                            <p class="text-gray-600 text-sm">
+                                Select between unified or side-by-side diff views for optimal readability.
+                            </p>
+                        </div>
+
+                        <!-- Step 3 -->
+                        <div class="text-center">
+                            <div class="bg-primary text-white w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-4 text-xl font-bold">
+                                3
+                            </div>
+                            <h3 class="text-lg font-semibold text-gray-900 mb-2">Analyze Changes</h3>
+                            <p class="text-gray-600 text-sm">
+                                Review your changes with syntax highlighting and clear visual indicators.
+                            </p>
+                        </div>
+
+                        <!-- Step 4 -->
+                        <div class="text-center">
+                            <div class="bg-primary text-white w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-4 text-xl font-bold">
+                                4
+                            </div>
+                            <h3 class="text-lg font-semibold text-gray-900 mb-2">Share or Export</h3>
+                            <p class="text-gray-600 text-sm">
+                                Copy to clipboard or download the formatted diff for sharing or archiving.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Open Source Section -->
+            <section class="py-20 bg-primary text-white">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+                    <div class="max-w-3xl mx-auto">
+                        <h2 class="text-3xl font-bold mb-6">Open Source & Community Driven</h2>
+                        <p class="text-xl mb-8 text-blue-100">
+                            DiffLens is built by developers, for developers. Join our community and help make code review better for everyone.
+                        </p>
+                        <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                            <a href="contribute.html" class="bg-white text-primary px-8 py-3 rounded-md font-semibold hover:bg-gray-100 transition-colors">
+                                Learn How to Contribute
+                            </a>
+                            <a href="https://github.com/NiazBinSiraj/difflense/issues" target="_blank" rel="noopener noreferrer" 
+                               class="border border-white text-white px-6 py-3 rounded-md font-semibold hover:bg-white hover:text-primary transition-colors">
+                                Report Issues
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </section>
         </div>
     </main>
 
@@ -141,11 +304,24 @@
     </footer>
 
     <!-- Scripts -->
-    <script src="assets/js/router.js"></script>
-    <script src="assets/js/pages.js"></script>
-    <script src="assets/js/diff-parser.js"></script>
-    <script src="assets/js/diff-viewer.js"></script>
     <script src="assets/js/github-integration.js"></script>
-    <script src="assets/js/main.js"></script>
+    <script>
+        // Simple mobile menu toggle
+        document.addEventListener('DOMContentLoaded', function() {
+            const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+            const mobileMenu = document.getElementById('mobile-menu');
+            
+            if (mobileMenuBtn && mobileMenu) {
+                mobileMenuBtn.addEventListener('click', function() {
+                    mobileMenu.classList.toggle('hidden');
+                });
+            }
+            
+            // Initialize GitHub integration
+            if (window.GitHubIntegration) {
+                window.GitHubIntegration.init();
+            }
+        });
+    </script>
 </body>
 </html>

@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contribute - DiffLens</title>
+    <meta name="description" content="Contribute to DiffLens - Help us improve the privacy-focused git diff viewer">
+    
+    <!-- TailwindCSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Custom Tailwind Config -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'primary': '#2563eb',
+                        'primary-dark': '#1d4ed8'
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="assets/css/main.css">
+</head>
+<body class="bg-gray-50">
+    <!-- Navigation -->
+    <nav class="bg-white shadow-sm fixed top-0 left-0 right-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <!-- Logo -->
+                <div class="flex items-center">
+                    <div class="flex-shrink-0 flex items-center">
+                        <svg class="h-8 w-8 text-primary mr-2" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M8 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h3c.6 0 1-.4 1-1s-.4-1-1-1H5V5h3c.6 0 1-.4 1-1s-.4-1-1-1zm7.5 17l1.1-1.1L14.7 17H21v-2h-6.3l1.9-1.9L15.5 12l-3.5 3.5v1L15.5 20z"/>
+                        </svg>
+                        <span class="text-xl font-bold text-gray-900">DiffLens</span>
+                    </div>
+                </div>
+
+                <!-- Desktop Navigation -->
+                <div class="hidden md:block">
+                    <div class="flex items-baseline space-x-4">
+                        <a href="index.html" class="nav-link px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-primary hover:bg-primary/5 transition-colors">Home</a>
+                        <a href="diff-view.html" class="nav-link px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-primary hover:bg-primary/5 transition-colors">Diff View</a>
+                        <a href="contribute.html" class="nav-link px-3 py-2 rounded-md text-sm font-medium text-primary bg-primary/10">Contribute</a>
+                        <a href="about.html" class="nav-link px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-primary hover:bg-primary/5 transition-colors">About</a>
+                        <a href="contact.html" class="nav-link px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-primary hover:bg-primary/5 transition-colors">Contact</a>
+                    </div>
+                </div>
+
+                <!-- GitHub Link -->
+                <div class="hidden md:flex items-center space-x-4">
+                    <a href="https://github.com/NiazBinSiraj/difflense" target="_blank" rel="noopener noreferrer" 
+                       class="flex items-center text-gray-700 hover:text-primary transition-colors">
+                        <svg class="h-5 w-5 mr-1" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/>
+                        </svg>
+                        <span id="github-stars" class="text-sm">★ Stars</span>
+                    </a>
+                </div>
+
+                <!-- Mobile menu button -->
+                <div class="md:hidden">
+                    <button id="mobile-menu-btn" class="text-gray-700 hover:text-primary focus:outline-none focus:text-primary">
+                        <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mobile Navigation -->
+        <div id="mobile-menu" class="md:hidden hidden bg-white border-t border-gray-200">
+            <div class="px-2 pt-2 pb-3 space-y-1">
+                <a href="index.html" class="mobile-nav-link block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-primary hover:bg-primary/5">Home</a>
+                <a href="diff-view.html" class="mobile-nav-link block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-primary hover:bg-primary/5">Diff View</a>
+                <a href="contribute.html" class="mobile-nav-link block px-3 py-2 rounded-md text-base font-medium text-primary bg-primary/10">Contribute</a>
+                <a href="about.html" class="mobile-nav-link block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-primary hover:bg-primary/5">About</a>
+                <a href="contact.html" class="mobile-nav-link block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-primary hover:bg-primary/5">Contact</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="pt-16 min-h-screen">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+            <div class="text-center mb-12">
+                <h1 class="text-4xl font-bold text-gray-900 mb-4">Contribute to DiffLens</h1>
+                <p class="text-lg text-gray-600">
+                    Help us make DiffLens better! Here's how you can contribute to our open-source project.
+                </p>
+            </div>
+
+            <div class="bg-white rounded-lg shadow-lg p-8 mb-8">
+                <h2 class="text-2xl font-bold text-gray-900 mb-6">Getting Started</h2>
+                
+                <div class="space-y-6">
+                    <div>
+                        <h3 class="text-xl font-semibold text-gray-900 mb-3">1. Fork the Repository</h3>
+                        <p class="text-gray-600 mb-4">
+                            Start by forking our repository on GitHub to create your own copy.
+                        </p>
+                        <div class="bg-gray-100 rounded-md p-4 font-mono text-sm overflow-x-auto">
+                            <p class="text-gray-800">
+                                git clone https://github.com/YOUR_USERNAME/difflense.git<br>
+                                cd difflense
+                            </p>
+                        </div>
+                    </div>
+
+                    <div>
+                        <h3 class="text-xl font-semibold text-gray-900 mb-3">2. Set Up Development Environment</h3>
+                        <p class="text-gray-600 mb-4">
+                            DiffLens is a static website project. You can serve it locally using any web server.
+                        </p>
+                        <div class="bg-gray-100 rounded-md p-4 font-mono text-sm overflow-x-auto">
+                            <p class="text-gray-800">
+                                # Using Python<br>
+                                python -m http.server 8000<br><br>
+                                # Using Node.js<br>
+                                npx serve .<br><br>
+                                # Using PHP<br>
+                                php -S localhost:8000
+                            </p>
+                        </div>
+                    </div>
+
+                    <div>
+                        <h3 class="text-xl font-semibold text-gray-900 mb-3">3. Make Your Changes</h3>
+                        <p class="text-gray-600 mb-4">
+                            Create a new branch for your feature or bug fix:
+                        </p>
+                        <div class="bg-gray-100 rounded-md p-4 font-mono text-sm overflow-x-auto">
+                            <p class="text-gray-800">
+                                git checkout -b feature/your-feature-name<br>
+                                # Make your changes<br>
+                                git add .<br>
+                                git commit -m "Add your descriptive commit message"
+                            </p>
+                        </div>
+                    </div>
+
+                    <div>
+                        <h3 class="text-xl font-semibold text-gray-900 mb-3">4. Submit a Pull Request</h3>
+                        <p class="text-gray-600 mb-4">
+                            Push your changes and create a pull request on GitHub.
+                        </p>
+                        <div class="bg-gray-100 rounded-md p-4 font-mono text-sm overflow-x-auto">
+                            <p class="text-gray-800">
+                                git push origin feature/your-feature-name
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-8 mb-8">
+                <div class="bg-white rounded-lg shadow-lg p-6">
+                    <h2 class="text-xl font-bold text-gray-900 mb-4">Ways to Contribute</h2>
+                    <ul class="space-y-3">
+                        <li class="flex items-start">
+                            <span class="text-primary mr-2">•</span>
+                            <span class="text-gray-600">Fix bugs and improve performance</span>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="text-primary mr-2">•</span>
+                            <span class="text-gray-600">Add new features and enhancements</span>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="text-primary mr-2">•</span>
+                            <span class="text-gray-600">Improve documentation</span>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="text-primary mr-2">•</span>
+                            <span class="text-gray-600">Report issues and suggest improvements</span>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="text-primary mr-2">•</span>
+                            <span class="text-gray-600">Add more diff format support</span>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="text-primary mr-2">•</span>
+                            <span class="text-gray-600">Improve UI/UX design</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="bg-white rounded-lg shadow-lg p-6">
+                    <h2 class="text-xl font-bold text-gray-900 mb-4">Coding Guidelines</h2>
+                    <ul class="space-y-3">
+                        <li class="flex items-start">
+                            <span class="text-primary mr-2">•</span>
+                            <span class="text-gray-600">Use modern JavaScript (ES6+)</span>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="text-primary mr-2">•</span>
+                            <span class="text-gray-600">Follow consistent code formatting</span>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="text-primary mr-2">•</span>
+                            <span class="text-gray-600">Write clear, descriptive commit messages</span>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="text-primary mr-2">•</span>
+                            <span class="text-gray-600">Test your changes thoroughly</span>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="text-primary mr-2">•</span>
+                            <span class="text-gray-600">Maintain privacy-first approach</span>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="text-primary mr-2">•</span>
+                            <span class="text-gray-600">Use TailwindCSS for styling</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-lg shadow-lg p-8 mb-8">
+                <h2 class="text-2xl font-bold text-gray-900 mb-6">Project Structure</h2>
+                <div class="bg-gray-100 rounded-md p-4 font-mono text-sm overflow-x-auto mb-4">
+                    <pre class="text-gray-800">difflense/
+├── index.html              # Home page
+├── diff-view.html          # Diff viewer page
+├── about.html              # About page
+├── contribute.html         # Contribute page
+├── contact.html            # Contact page
+├── assets/
+│   ├── css/
+│   │   └── main.css        # Custom styles
+│   └── js/
+│       ├── diff-parser.js  # Git diff parsing logic
+│       ├── diff-viewer.js  # Diff rendering and UI
+│       ├── github-integration.js  # GitHub API integration
+│       └── main.js         # Application initialization
+├── README.md
+└── LICENSE</pre>
+                </div>
+                <p class="text-gray-600">
+                    The project follows a simple, modular structure with each JavaScript file handling specific functionality. 
+                    CSS is handled by TailwindCSS with custom styles in main.css for diff-specific styling.
+                </p>
+            </div>
+
+            <div class="bg-white rounded-lg shadow-lg p-8 mb-8">
+                <h2 class="text-2xl font-bold text-gray-900 mb-6">Feature Ideas</h2>
+                <div class="grid md:grid-cols-2 gap-6">
+                    <div>
+                        <h3 class="text-lg font-semibold text-gray-900 mb-2">🎨 UI/UX Improvements</h3>
+                        <ul class="text-gray-600 space-y-1 text-sm">
+                            <li>• Dark mode support</li>
+                            <li>• Custom color themes</li>
+                            <li>• Better mobile responsiveness</li>
+                            <li>• Keyboard shortcuts</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-semibold text-gray-900 mb-2">⚡ Performance</h3>
+                        <ul class="text-gray-600 space-y-1 text-sm">
+                            <li>• Large file handling</li>
+                            <li>• Virtual scrolling</li>
+                            <li>• Lazy loading</li>
+                            <li>• Memory optimization</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-semibold text-gray-900 mb-2">🔧 Features</h3>
+                        <ul class="text-gray-600 space-y-1 text-sm">
+                            <li>• Inline commenting</li>
+                            <li>• Export to PDF</li>
+                            <li>• Diff statistics</li>
+                            <li>• Search within diffs</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-semibold text-gray-900 mb-2">🧪 Testing</h3>
+                        <ul class="text-gray-600 space-y-1 text-sm">
+                            <li>• Unit tests</li>
+                            <li>• E2E testing</li>
+                            <li>• Browser compatibility</li>
+                            <li>• Performance benchmarks</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-primary/5 rounded-lg p-6">
+                <h2 class="text-xl font-bold text-gray-900 mb-4">Ready to Get Started?</h2>
+                <p class="text-gray-600 mb-4">
+                    Join our community of contributors and help make DiffLens the best git diff viewer available.
+                </p>
+                <div class="flex flex-col sm:flex-row gap-4">
+                    <a href="https://github.com/NiazBinSiraj/difflense" target="_blank" rel="noopener noreferrer" class="btn-primary">
+                        Fork on GitHub
+                    </a>
+                    <a href="https://github.com/NiazBinSiraj/difflense/issues" target="_blank" rel="noopener noreferrer" class="btn-outline">
+                        Report Issues
+                    </a>
+                    <a href="contact.html" class="btn-outline">
+                        Get in Touch
+                    </a>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-white py-8">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center">
+                <div class="flex justify-center items-center mb-4">
+                    <svg class="h-8 w-8 text-white mr-2" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M8 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h3c.6 0 1-.4 1-1s-.4-1-1-1H5V5h3c.6 0 1-.4 1-1s-.4-1-1-1zm7.5 17l1.1-1.1L14.7 17H21v-2h-6.3l1.9-1.9L15.5 12l-3.5 3.5v1L15.5 20z"/>
+                    </svg>
+                    <span class="text-xl font-bold">DiffLens</span>
+                </div>
+                <div class="flex justify-center space-x-6 mb-6">
+                    <a href="index.html" class="text-gray-400 hover:text-white transition-colors">Home</a>
+                    <a href="about.html" class="text-gray-400 hover:text-white transition-colors">About</a>
+                    <a href="contribute.html" class="text-gray-400 hover:text-white transition-colors">Contribute</a>
+                    <a href="https://github.com/NiazBinSiraj/difflense" target="_blank" rel="noopener noreferrer" 
+                       class="text-gray-400 hover:text-white transition-colors">GitHub</a>
+                </div>
+                <div class="mt-6 pt-6 border-t border-gray-800">
+                    <p class="text-gray-500 text-xs">
+                        © 2025 DiffLens. Open source project. Built with privacy in mind.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="assets/js/github-integration.js"></script>
+    <script>
+        // Mobile menu toggle and initialization
+        document.addEventListener('DOMContentLoaded', function() {
+            const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+            const mobileMenu = document.getElementById('mobile-menu');
+            
+            if (mobileMenuBtn && mobileMenu) {
+                mobileMenuBtn.addEventListener('click', function() {
+                    mobileMenu.classList.toggle('hidden');
+                });
+            }
+            
+            // Initialize GitHub integration
+            if (window.GitHubIntegration) {
+                window.GitHubIntegration.init();
+            }
+        });
+    </script>
+</body>
+</html>
