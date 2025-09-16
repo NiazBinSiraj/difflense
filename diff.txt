@@ -1,0 +1,1246 @@
+diff --git a/main/src/main/java/net/therap/billing/service/Edi837ViewerService.java b/main/src/main/java/net/therap/billing/service/Edi837ViewerService.java
+new file mode 100644
+index 00000000000..c44fde24535
+--- /dev/null
++++ b/main/src/main/java/net/therap/billing/service/Edi837ViewerService.java
+@@ -0,0 +1,39 @@
++package net.therap.billing.service;
++
++import net.therap.billing.util.Edi837Parser;
++import org.slf4j.Logger;
++import org.slf4j.LoggerFactory;
++import org.springframework.stereotype.Service;
++
++import java.util.Optional;
++
++/**
++ * @author niazsiraj
++ * @since 9/15/25
++ */
++@Service
++public class Edi837ViewerService {
++
++    private static final Logger logger = LoggerFactory.getLogger(Edi837ViewerService.class);
++
++    public Optional<Edi837Parser.ParsedEdi837> parseEdiContent(String ediContent) {
++        try {
++            if (ediContent == null || ediContent.trim().isEmpty()) {
++                return Optional.empty();
++            }
++
++            logger.info("Starting EDI 837 parsing for content length: {}", ediContent.length());
++            Edi837Parser.ParsedEdi837 parsedEdi = Edi837Parser.parseEdi837(ediContent);
++            logger.info("Successfully parsed EDI 837 content");
++
++            return Optional.of(parsedEdi);
++        } catch (Exception e) {
++            logger.error("Error parsing EDI 837 content", e);
++            return Optional.empty();
++        }
++    }
++
++    public String generateSampleEdi837() {
++        return Edi837Parser.generateSampleEdi837();
++    }
++}
+diff --git a/main/src/main/java/net/therap/billing/util/Edi837Parser.java b/main/src/main/java/net/therap/billing/util/Edi837Parser.java
+new file mode 100644
+index 00000000000..bf669d34f62
+--- /dev/null
++++ b/main/src/main/java/net/therap/billing/util/Edi837Parser.java
+@@ -0,0 +1,659 @@
++package net.therap.billing.util;
++
++import org.slf4j.Logger;
++import org.slf4j.LoggerFactory;
++
++import java.util.*;
++
++/**
++ * @author niazsiraj
++ * @since 9/15/25
++ */
++public class Edi837Parser {
++
++    private static final Logger logger = LoggerFactory.getLogger(Edi837Parser.class);
++
++    private static final String SEGMENT_SEPARATOR = "~";
++    private static final String ELEMENT_SEPARATOR = "*";
++    private static final String COMPOSITE_SEPARATOR = ":";
++
++    public static class ParsedEdi837 {
++        private String transactionSetHeader;
++        private String beginningOfHierarchicalTransaction;
++        private List<BillingProvider> billingProviders = new ArrayList<>();
++        private List<Subscriber> subscribers = new ArrayList<>();
++        private List<Patient> patients = new ArrayList<>();
++        private List<Claim> claims = new ArrayList<>();
++        private String transactionSetTrailer;
++
++        public String getTransactionSetHeader() {
++            return transactionSetHeader;
++        }
++
++        public void setTransactionSetHeader(String transactionSetHeader) {
++            this.transactionSetHeader = transactionSetHeader;
++        }
++
++        public String getBeginningOfHierarchicalTransaction() {
++            return beginningOfHierarchicalTransaction;
++        }
++
++        public void setBeginningOfHierarchicalTransaction(String beginningOfHierarchicalTransaction) {
++            this.beginningOfHierarchicalTransaction = beginningOfHierarchicalTransaction;
++        }
++
++        public List<BillingProvider> getBillingProviders() {
++            return billingProviders;
++        }
++
++        public void setBillingProviders(List<BillingProvider> billingProviders) {
++            this.billingProviders = billingProviders;
++        }
++
++        public List<Subscriber> getSubscribers() {
++            return subscribers;
++        }
++
++        public void setSubscribers(List<Subscriber> subscribers) {
++            this.subscribers = subscribers;
++        }
++
++        public List<Patient> getPatients() {
++            return patients;
++        }
++
++        public void setPatients(List<Patient> patients) {
++            this.patients = patients;
++        }
++
++        public List<Claim> getClaims() {
++            return claims;
++        }
++
++        public void setClaims(List<Claim> claims) {
++            this.claims = claims;
++        }
++
++        public String getTransactionSetTrailer() {
++            return transactionSetTrailer;
++        }
++
++        public void setTransactionSetTrailer(String transactionSetTrailer) {
++            this.transactionSetTrailer = transactionSetTrailer;
++        }
++    }
++
++    public static class BillingProvider {
++        private String hierarchicalLevel;
++        private String providerName;
++        private String npi;
++        private String taxId;
++        private String address;
++        private String city;
++        private String state;
++        private String zipCode;
++
++        public String getHierarchicalLevel() {
++            return hierarchicalLevel;
++        }
++
++        public void setHierarchicalLevel(String hierarchicalLevel) {
++            this.hierarchicalLevel = hierarchicalLevel;
++        }
++
++        public String getProviderName() {
++            return providerName;
++        }
++
++        public void setProviderName(String providerName) {
++            this.providerName = providerName;
++        }
++
++        public String getNpi() {
++            return npi;
++        }
++
++        public void setNpi(String npi) {
++            this.npi = npi;
++        }
++
++        public String getTaxId() {
++            return taxId;
++        }
++
++        public void setTaxId(String taxId) {
++            this.taxId = taxId;
++        }
++
++        public String getAddress() {
++            return address;
++        }
++
++        public void setAddress(String address) {
++            this.address = address;
++        }
++
++        public String getCity() {
++            return city;
++        }
++
++        public void setCity(String city) {
++            this.city = city;
++        }
++
++        public String getState() {
++            return state;
++        }
++
++        public void setState(String state) {
++            this.state = state;
++        }
++
++        public String getZipCode() {
++            return zipCode;
++        }
++
++        public void setZipCode(String zipCode) {
++            this.zipCode = zipCode;
++        }
++    }
++
++    public static class Subscriber {
++        private String hierarchicalLevel;
++        private String payerResponsibilityCode;
++        private String subscriberName;
++        private String memberId;
++        private String relationshipCode;
++        private String dateOfBirth;
++        private String gender;
++
++        public String getHierarchicalLevel() {
++            return hierarchicalLevel;
++        }
++
++        public void setHierarchicalLevel(String hierarchicalLevel) {
++            this.hierarchicalLevel = hierarchicalLevel;
++        }
++
++        public String getPayerResponsibilityCode() {
++            return payerResponsibilityCode;
++        }
++
++        public void setPayerResponsibilityCode(String payerResponsibilityCode) {
++            this.payerResponsibilityCode = payerResponsibilityCode;
++        }
++
++        public String getSubscriberName() {
++            return subscriberName;
++        }
++
++        public void setSubscriberName(String subscriberName) {
++            this.subscriberName = subscriberName;
++        }
++
++        public String getMemberId() {
++            return memberId;
++        }
++
++        public void setMemberId(String memberId) {
++            this.memberId = memberId;
++        }
++
++        public String getRelationshipCode() {
++            return relationshipCode;
++        }
++
++        public void setRelationshipCode(String relationshipCode) {
++            this.relationshipCode = relationshipCode;
++        }
++
++        public String getDateOfBirth() {
++            return dateOfBirth;
++        }
++
++        public void setDateOfBirth(String dateOfBirth) {
++            this.dateOfBirth = dateOfBirth;
++        }
++
++        public String getGender() {
++            return gender;
++        }
++
++        public void setGender(String gender) {
++            this.gender = gender;
++        }
++    }
++
++    public static class Patient {
++        private String hierarchicalLevel;
++        private String patientName;
++        private String dateOfBirth;
++        private String gender;
++        private String relationshipCode;
++
++        public String getHierarchicalLevel() {
++            return hierarchicalLevel;
++        }
++
++        public void setHierarchicalLevel(String hierarchicalLevel) {
++            this.hierarchicalLevel = hierarchicalLevel;
++        }
++
++        public String getPatientName() {
++            return patientName;
++        }
++
++        public void setPatientName(String patientName) {
++            this.patientName = patientName;
++        }
++
++        public String getDateOfBirth() {
++            return dateOfBirth;
++        }
++
++        public void setDateOfBirth(String dateOfBirth) {
++            this.dateOfBirth = dateOfBirth;
++        }
++
++        public String getGender() {
++            return gender;
++        }
++
++        public void setGender(String gender) {
++            this.gender = gender;
++        }
++
++        public String getRelationshipCode() {
++            return relationshipCode;
++        }
++
++        public void setRelationshipCode(String relationshipCode) {
++            this.relationshipCode = relationshipCode;
++        }
++    }
++
++    public static class Claim {
++        private String claimSubmitterIdentifier;
++        private String totalClaimChargeAmount;
++        private String placeOfServiceCode;
++        private String facilityCodeValue;
++        private String claimFrequencyTypeCode;
++        private String providerSignatureIndicator;
++        private String serviceFromDate;
++        private String serviceToDate;
++        private List<ServiceLine> serviceLines = new ArrayList<>();
++
++        public String getClaimSubmitterIdentifier() {
++            return claimSubmitterIdentifier;
++        }
++
++        public void setClaimSubmitterIdentifier(String claimSubmitterIdentifier) {
++            this.claimSubmitterIdentifier = claimSubmitterIdentifier;
++        }
++
++        public String getTotalClaimChargeAmount() {
++            return totalClaimChargeAmount;
++        }
++
++        public void setTotalClaimChargeAmount(String totalClaimChargeAmount) {
++            this.totalClaimChargeAmount = totalClaimChargeAmount;
++        }
++
++        public String getPlaceOfServiceCode() {
++            return placeOfServiceCode;
++        }
++
++        public void setPlaceOfServiceCode(String placeOfServiceCode) {
++            this.placeOfServiceCode = placeOfServiceCode;
++        }
++
++        public String getFacilityCodeValue() {
++            return facilityCodeValue;
++        }
++
++        public void setFacilityCodeValue(String facilityCodeValue) {
++            this.facilityCodeValue = facilityCodeValue;
++        }
++
++        public String getClaimFrequencyTypeCode() {
++            return claimFrequencyTypeCode;
++        }
++
++        public void setClaimFrequencyTypeCode(String claimFrequencyTypeCode) {
++            this.claimFrequencyTypeCode = claimFrequencyTypeCode;
++        }
++
++        public String getProviderSignatureIndicator() {
++            return providerSignatureIndicator;
++        }
++
++        public void setProviderSignatureIndicator(String providerSignatureIndicator) {
++            this.providerSignatureIndicator = providerSignatureIndicator;
++        }
++
++        public String getServiceFromDate() {
++            return serviceFromDate;
++        }
++
++        public void setServiceFromDate(String serviceFromDate) {
++            this.serviceFromDate = serviceFromDate;
++        }
++
++        public String getServiceToDate() {
++            return serviceToDate;
++        }
++
++        public void setServiceToDate(String serviceToDate) {
++            this.serviceToDate = serviceToDate;
++        }
++
++        public List<ServiceLine> getServiceLines() {
++            return serviceLines;
++        }
++
++        public void setServiceLines(List<ServiceLine> serviceLines) {
++            this.serviceLines = serviceLines;
++        }
++    }
++
++    public static class ServiceLine {
++        private String serviceLineNumber;
++        private String procedureCode;
++        private String serviceUnitCount;
++        private String lineItemChargeAmount;
++        private String diagnosisCodePointer;
++
++        public String getServiceLineNumber() {
++            return serviceLineNumber;
++        }
++
++        public void setServiceLineNumber(String serviceLineNumber) {
++            this.serviceLineNumber = serviceLineNumber;
++        }
++
++        public String getProcedureCode() {
++            return procedureCode;
++        }
++
++        public void setProcedureCode(String procedureCode) {
++            this.procedureCode = procedureCode;
++        }
++
++        public String getServiceUnitCount() {
++            return serviceUnitCount;
++        }
++
++        public void setServiceUnitCount(String serviceUnitCount) {
++            this.serviceUnitCount = serviceUnitCount;
++        }
++
++        public String getLineItemChargeAmount() {
++            return lineItemChargeAmount;
++        }
++
++        public void setLineItemChargeAmount(String lineItemChargeAmount) {
++            this.lineItemChargeAmount = lineItemChargeAmount;
++        }
++
++        public String getDiagnosisCodePointer() {
++            return diagnosisCodePointer;
++        }
++
++        public void setDiagnosisCodePointer(String diagnosisCodePointer) {
++            this.diagnosisCodePointer = diagnosisCodePointer;
++        }
++    }
++
++    public static ParsedEdi837 parseEdi837(String ediContent) {
++        if (ediContent == null || ediContent.trim().isEmpty()) {
++            throw new IllegalArgumentException("EDI content cannot be null or empty");
++        }
++
++        try {
++            ParsedEdi837 parsed = new ParsedEdi837();
++            String[] segments = ediContent.split(SEGMENT_SEPARATOR);
++
++            for (String segment : segments) {
++                if (segment.trim().isEmpty()) {
++                    continue;
++                }
++
++                String[] elements = segment.split("\\" + ELEMENT_SEPARATOR);
++                if (elements.length == 0) {
++                    continue;
++                }
++
++                String segmentId = elements[0];
++
++                switch (segmentId) {
++                    case "ST":
++                        parsed.setTransactionSetHeader(segment);
++                        break;
++                    case "BHT":
++                        parsed.setBeginningOfHierarchicalTransaction(segment);
++                        break;
++                    case "HL":
++                        handleHierarchicalLevel(elements, parsed);
++                        break;
++                    case "PRV":
++                        handleProviderSegment(elements, parsed);
++                        break;
++                    case "NM1":
++                        handleNameSegment(elements, parsed);
++                        break;
++                    case "N3":
++                        handleAddressSegment(elements, parsed);
++                        break;
++                    case "N4":
++                        handleCityStateZipSegment(elements, parsed);
++                        break;
++                    case "REF":
++                        handleReferenceSegment(elements, parsed);
++                        break;
++                    case "DMG":
++                        handleDemographicsSegment(elements, parsed);
++                        break;
++                    case "CLM":
++                        handleClaimSegment(elements, parsed);
++                        break;
++                    case "DTP":
++                        handleDateSegment(elements, parsed);
++                        break;
++                    case "SV1":
++                        handleServiceLineSegment(elements, parsed);
++                        break;
++                    case "SE":
++                        parsed.setTransactionSetTrailer(segment);
++                        break;
++                }
++            }
++
++            return parsed;
++        } catch (Exception e) {
++            logger.error("Error parsing EDI 837 content", e);
++            throw new RuntimeException("Failed to parse EDI 837 content: " + e.getMessage(), e);
++        }
++    }
++
++    private static void handleHierarchicalLevel(String[] elements, ParsedEdi837 parsed) {
++        if (elements.length < 4) {
++            return;
++        }
++
++        String levelCode = elements[3];
++
++        switch (levelCode) {
++            case "20": // Billing Provider
++                BillingProvider provider = new BillingProvider();
++                provider.setHierarchicalLevel(elements[1]);
++                parsed.getBillingProviders().add(provider);
++                break;
++            case "22": // Subscriber
++                Subscriber subscriber = new Subscriber();
++                subscriber.setHierarchicalLevel(elements[1]);
++                parsed.getSubscribers().add(subscriber);
++                break;
++            case "23": // Patient
++                Patient patient = new Patient();
++                patient.setHierarchicalLevel(elements[1]);
++                parsed.getPatients().add(patient);
++                break;
++        }
++    }
++
++    private static void handleProviderSegment(String[] elements, ParsedEdi837 parsed) {
++        if (elements.length > 3 && !parsed.getBillingProviders().isEmpty()) {
++            BillingProvider lastProvider = parsed.getBillingProviders().get(parsed.getBillingProviders().size() - 1);
++            lastProvider.setNpi(elements[3]);
++        }
++    }
++
++    private static void handleNameSegment(String[] elements, ParsedEdi837 parsed) {
++        if (elements.length < 4) {
++            return;
++        }
++
++        String entityTypeQualifier = elements[1];
++        String name = elements[3];
++
++        switch (entityTypeQualifier) {
++            case "85": // Billing Provider
++                if (!parsed.getBillingProviders().isEmpty()) {
++                    parsed.getBillingProviders().get(parsed.getBillingProviders().size() - 1).setProviderName(name);
++                }
++                break;
++            case "IL": // Subscriber
++                if (!parsed.getSubscribers().isEmpty()) {
++                    parsed.getSubscribers().get(parsed.getSubscribers().size() - 1).setSubscriberName(name);
++                }
++                break;
++            case "QC": // Patient
++                if (!parsed.getPatients().isEmpty()) {
++                    parsed.getPatients().get(parsed.getPatients().size() - 1).setPatientName(name);
++                }
++                break;
++        }
++    }
++
++    private static void handleAddressSegment(String[] elements, ParsedEdi837 parsed) {
++        if (elements.length > 1 && !parsed.getBillingProviders().isEmpty()) {
++            BillingProvider lastProvider = parsed.getBillingProviders().get(parsed.getBillingProviders().size() - 1);
++            lastProvider.setAddress(elements[1]);
++        }
++    }
++
++    private static void handleCityStateZipSegment(String[] elements, ParsedEdi837 parsed) {
++        if (elements.length > 3 && !parsed.getBillingProviders().isEmpty()) {
++            BillingProvider lastProvider = parsed.getBillingProviders().get(parsed.getBillingProviders().size() - 1);
++            lastProvider.setCity(elements[1]);
++            lastProvider.setState(elements[2]);
++            lastProvider.setZipCode(elements[3]);
++        }
++    }
++
++    private static void handleReferenceSegment(String[] elements, ParsedEdi837 parsed) {
++        if (elements.length < 3) {
++            return;
++        }
++
++        String referenceQualifier = elements[1];
++        String referenceValue = elements[2];
++
++        if ("EI".equals(referenceQualifier) && !parsed.getBillingProviders().isEmpty()) {
++            // Tax ID handling
++            parsed.getBillingProviders().get(parsed.getBillingProviders().size() - 1).setTaxId(referenceValue);
++        } else if ("SY".equals(referenceQualifier) && !parsed.getSubscribers().isEmpty()) {
++            // Member ID handling
++            parsed.getSubscribers().get(parsed.getSubscribers().size() - 1).setMemberId(referenceValue);
++        }
++    }
++
++    private static void handleDemographicsSegment(String[] elements, ParsedEdi837 parsed) {
++        if (elements.length < 3) {
++            return;
++        }
++
++        String dateOfBirth = elements[2];
++        String gender = elements.length > 3 ? elements[3] : "";
++
++        if (!parsed.getSubscribers().isEmpty()) {
++            Subscriber lastSubscriber = parsed.getSubscribers().get(parsed.getSubscribers().size() - 1);
++            lastSubscriber.setDateOfBirth(dateOfBirth);
++            lastSubscriber.setGender(gender);
++        } else if (!parsed.getPatients().isEmpty()) {
++            Patient lastPatient = parsed.getPatients().get(parsed.getPatients().size() - 1);
++            lastPatient.setDateOfBirth(dateOfBirth);
++            lastPatient.setGender(gender);
++        }
++    }
++
++    private static void handleClaimSegment(String[] elements, ParsedEdi837 parsed) {
++        if (elements.length < 3) {
++            return;
++        }
++
++        Claim claim = new Claim();
++        claim.setClaimSubmitterIdentifier(elements[1]);
++        claim.setTotalClaimChargeAmount(elements[2]);
++
++        parsed.getClaims().add(claim);
++    }
++
++    private static void handleDateSegment(String[] elements, ParsedEdi837 parsed) {
++        if (elements.length < 4 || parsed.getClaims().isEmpty()) {
++            return;
++        }
++
++        String dateQualifier = elements[1];
++        String date = elements[3];
++
++        Claim lastClaim = parsed.getClaims().get(parsed.getClaims().size() - 1);
++
++        if ("472".equals(dateQualifier)) {
++            lastClaim.setServiceFromDate(date);
++        }
++    }
++
++    private static void handleServiceLineSegment(String[] elements, ParsedEdi837 parsed) {
++        if (elements.length < 3 || parsed.getClaims().isEmpty()) {
++            return;
++        }
++
++        ServiceLine serviceLine = new ServiceLine();
++        serviceLine.setLineItemChargeAmount(elements[2]);
++
++        if (elements.length > 1) {
++            String[] procedureInfo = elements[1].split(COMPOSITE_SEPARATOR);
++            if (procedureInfo.length > 1) {
++                serviceLine.setProcedureCode(procedureInfo[1]);
++            }
++        }
++
++        Claim lastClaim = parsed.getClaims().get(parsed.getClaims().size() - 1);
++        lastClaim.getServiceLines().add(serviceLine);
++    }
++
++    public static String generateSampleEdi837() {
++        return "ST*837*0001~" +
++               "BHT*0019*00*SAMPLE*20250915*1200*CH~" +
++               "HL*1**20*1~" +
++               "PRV*BI*PXC*1234567890~" +
++               "NM1*85*2*SAMPLE PROVIDER*****XX*1234567890~" +
++               "N3*123 MAIN ST~" +
++               "N4*ANYTOWN*NY*12345~" +
++               "REF*EI*123456789~" +
++               "HL*2*1*22*1~" +
++               "SBR*P*18*GROUP001**CI***MB~" +
++               "NM1*IL*1*DOE*JOHN****MI*MEMBER123~" +
++               "DMG*D8*19800101*M~" +
++               "HL*3*2*23*0~" +
++               "PAT*19~" +
++               "NM1*QC*1*DOE*JANE~" +
++               "DMG*D8*19850615*F~" +
++               "CLM*CLAIM001*150.00***11:B:1*Y*A*Y*I~" +
++               "DTP*472*D8*20250901~" +
++               "SV1*HC:99213*75.00*1*UN**1~" +
++               "SV1*HC:99214*75.00*1*UN**2~" +
++               "SE*20*0001~";
++    }
++}
+diff --git a/main/src/main/java/net/therap/billing/web/command/Edi837ViewerCommand.java b/main/src/main/java/net/therap/billing/web/command/Edi837ViewerCommand.java
+new file mode 100644
+index 00000000000..34169b12650
+--- /dev/null
++++ b/main/src/main/java/net/therap/billing/web/command/Edi837ViewerCommand.java
+@@ -0,0 +1,27 @@
++package net.therap.billing.web.command;
++
++/**
++ * @author niazsiraj
++ * @since 9/15/25
++ */
++public class Edi837ViewerCommand {
++
++    private String ediContent;
++    private boolean isParsed;
++
++    public String getEdiContent() {
++        return ediContent;
++    }
++
++    public void setEdiContent(String ediContent) {
++        this.ediContent = ediContent;
++    }
++
++    public boolean isParsed() {
++        return isParsed;
++    }
++
++    public void setParsed(boolean parsed) {
++        isParsed = parsed;
++    }
++}
+diff --git a/main/src/main/java/net/therap/billing/web/controller/Edi837ViewerController.java b/main/src/main/java/net/therap/billing/web/controller/Edi837ViewerController.java
+new file mode 100644
+index 00000000000..a6495cbadb7
+--- /dev/null
++++ b/main/src/main/java/net/therap/billing/web/controller/Edi837ViewerController.java
+@@ -0,0 +1,77 @@
++package net.therap.billing.web.controller;
++
++import net.therap.billing.service.Edi837ViewerService;
++import net.therap.billing.util.Edi837Parser;
++import net.therap.billing.web.command.Edi837ViewerCommand;
++import org.slf4j.Logger;
++import org.slf4j.LoggerFactory;
++import org.springframework.beans.factory.annotation.Autowired;
++import org.springframework.stereotype.Controller;
++import org.springframework.ui.ModelMap;
++import org.springframework.web.bind.annotation.ModelAttribute;
++import org.springframework.web.bind.annotation.RequestMapping;
++import org.springframework.web.bind.annotation.RequestMethod;
++
++import java.util.Optional;
++
++/**
++ * @author niazsiraj
++ * @since 9/15/25
++ */
++@Controller
++@RequestMapping("/edi837Viewer")
++public class Edi837ViewerController {
++
++    private static final Logger logger = LoggerFactory.getLogger(Edi837ViewerController.class);
++
++    private final Edi837ViewerService edi837ViewerService;
++
++    @Autowired
++    public Edi837ViewerController(Edi837ViewerService edi837ViewerService) {
++        this.edi837ViewerService = edi837ViewerService;
++    }
++
++    @RequestMapping(method = RequestMethod.GET)
++    public String index(ModelMap model) {
++        model.addAttribute("edi837ViewerCommand", new Edi837ViewerCommand());
++        return "edi837Viewer.jsp";
++    }
++
++    @RequestMapping(value = "/parse", method = RequestMethod.POST)
++    public String parseEdi(@ModelAttribute("edi837ViewerCommand") Edi837ViewerCommand command, ModelMap model) {
++        try {
++            Optional<Edi837Parser.ParsedEdi837> parsedEdiOptional = edi837ViewerService.parseEdiContent(command.getEdiContent());
++
++            if (parsedEdiOptional.isPresent()) {
++                model.addAttribute("parsedEdi", parsedEdiOptional.get());
++                command.setParsed(true);
++                model.addAttribute("successMessage", "EDI 837 content parsed successfully!");
++            } else {
++                model.addAttribute("errorMessage", "Failed to parse EDI 837 content. Please check the format and try again.");
++            }
++        } catch (Exception e) {
++            logger.error("Error parsing EDI 837 content", e);
++            model.addAttribute("errorMessage", "An error occurred while parsing the EDI 837 content: " + e.getMessage());
++        }
++
++        model.addAttribute("edi837ViewerCommand", command);
++        return "edi837Viewer.jsp";
++    }
++
++    @RequestMapping(value = "/clear", method = RequestMethod.POST)
++    public String clearContent(ModelMap model) {
++        model.addAttribute("edi837ViewerCommand", new Edi837ViewerCommand());
++        model.addAttribute("successMessage", "Content cleared successfully!");
++        return "edi837Viewer.jsp";
++    }
++
++    @RequestMapping(value = "/sample", method = RequestMethod.POST)
++    public String loadSample(ModelMap model) {
++        Edi837ViewerCommand command = new Edi837ViewerCommand();
++        command.setEdiContent(edi837ViewerService.generateSampleEdi837());
++
++        model.addAttribute("edi837ViewerCommand", command);
++        model.addAttribute("successMessage", "Sample EDI 837 content loaded successfully!");
++        return "edi837Viewer.jsp";
++    }
++}
+diff --git a/main/src/main/webapp/WEB-INF/billing/jsp/edi837Viewer.jsp b/main/src/main/webapp/WEB-INF/billing/jsp/edi837Viewer.jsp
+new file mode 100644
+index 00000000000..c0fd9c4c320
+--- /dev/null
++++ b/main/src/main/webapp/WEB-INF/billing/jsp/edi837Viewer.jsp
+@@ -0,0 +1,402 @@
++<%@ page contentType="text/html;charset=UTF-8" language="java" %>
++<%@ include file="/WEB-INF/jsp/taglibs.jsp" %>
++
++<%--
++  @author niazsiraj
++  @since 9/15/25
++--%>
++
++<html>
++<head>
++    <meta name="decorator" content="bootstrap-decorator"/>
++    <title>Billing&nbsp;::&nbsp;EDI 837 Viewer</title>
++    <style>
++        .edi-content-textarea {
++            font-family: 'Courier New', monospace;
++            font-size: 12px;
++            line-height: 1.4;
++        }
++        .parsed-content {
++            background-color: #f8f9fa;
++            border: 1px solid #dee2e6;
++            border-radius: 4px;
++            padding: 15px;
++            margin-top: 15px;
++        }
++        .segment-section {
++            margin-bottom: 20px;
++            border: 1px solid #e3e6ea;
++            border-radius: 4px;
++            overflow: hidden;
++        }
++        .segment-header {
++            background-color: #e9ecef;
++            padding: 10px 15px;
++            border-bottom: 1px solid #e3e6ea;
++            font-weight: bold;
++            color: #495057;
++        }
++        .segment-body {
++            padding: 15px;
++        }
++        .data-table {
++            width: 100%;
++            margin-bottom: 10px;
++        }
++        .data-table th {
++            background-color: #f8f9fa;
++            font-weight: bold;
++            padding: 8px;
++            border: 1px solid #dee2e6;
++            text-align: left;
++        }
++        .data-table td {
++            padding: 8px;
++            border: 1px solid #dee2e6;
++        }
++        .service-line {
++            background-color: #fff;
++            border: 1px solid #dee2e6;
++            border-radius: 4px;
++            padding: 10px;
++            margin-bottom: 10px;
++        }
++        .alert-custom {
++            margin-bottom: 20px;
++        }
++    </style>
++</head>
++<body onkeypress="disableImplicitFormSubmission(event);">
++
++<b:formHeader titleKey="label.bill.edi.837.viewer"/>
++
++<form:form modelAttribute="edi837ViewerCommand" method="post">
++
++    <!-- Success/Error Messages -->
++    <c:if test="${not empty successMessage}">
++        <div class="alert alert-success alert-custom">
++            <strong>Success!</strong> ${successMessage}
++        </div>
++    </c:if>
++
++    <c:if test="${not empty errorMessage}">
++        <div class="alert alert-danger alert-custom">
++            <strong>Error!</strong> ${errorMessage}
++        </div>
++    </c:if>
++
++    <b:section titleKey="label.bill.edi.837.content.input">
++        <jsp:attribute name="body">
++            <div class="row">
++                <div class="col-md-12">
++                    <div class="form-group">
++                        <label for="ediContent" class="control-label">
++                            <strong>EDI 837 Content:</strong>
++                        </label>
++                        <form:textarea path="ediContent"
++                                      id="ediContent"
++                                      class="form-control edi-content-textarea"
++                                      rows="10"
++                                      placeholder="Paste your EDI 837 content here..."/>
++                        <form:errors path="ediContent" cssClass="text-danger"/>
++                    </div>
++                </div>
++            </div>
++        </jsp:attribute>
++    </b:section>
++
++    <b:buttonSection>
++        <jsp:attribute name="left">
++            <button type="submit" formaction="<c:url value='/billing/edi837Viewer/sample'/>"
++                    class="btn btn-info">
++                <i class="fa fa-file-text"></i> Load Sample EDI 837
++            </button>
++        </jsp:attribute>
++
++        <jsp:attribute name="right">
++            <button type="submit" formaction="<c:url value='/billing/edi837Viewer/clear'/>"
++                    class="btn btn-secondary">
++                <i class="fa fa-eraser"></i> Clear
++            </button>
++
++            <button type="submit" formaction="<c:url value='/billing/edi837Viewer/parse'/>"
++                    class="btn btn-primary">
++                <i class="fa fa-search"></i> Parse EDI 837
++            </button>
++        </jsp:attribute>
++    </b:buttonSection>
++
++</form:form>
++
++<!-- Parsed Content Display -->
++<c:if test="${not empty parsedEdi and edi837ViewerCommand.parsed}">
++    <b:section titleKey="label.bill.edi.837.parsed.content">
++        <jsp:attribute name="body">
++            <div class="parsed-content">
++
++                <!-- Transaction Set Header -->
++                <c:if test="${not empty parsedEdi.transactionSetHeader}">
++                    <div class="segment-section">
++                        <div class="segment-header">Transaction Set Header (ST)</div>
++                        <div class="segment-body">
++                            <code>${parsedEdi.transactionSetHeader}</code>
++                        </div>
++                    </div>
++                </c:if>
++
++                <!-- Beginning of Hierarchical Transaction -->
++                <c:if test="${not empty parsedEdi.beginningOfHierarchicalTransaction}">
++                    <div class="segment-section">
++                        <div class="segment-header">Beginning of Hierarchical Transaction (BHT)</div>
++                        <div class="segment-body">
++                            <code>${parsedEdi.beginningOfHierarchicalTransaction}</code>
++                        </div>
++                    </div>
++                </c:if>
++
++                <!-- Billing Providers -->
++                <c:if test="${not empty parsedEdi.billingProviders}">
++                    <div class="segment-section">
++                        <div class="segment-header">Billing Providers (${fn:length(parsedEdi.billingProviders)} found)</div>
++                        <div class="segment-body">
++                            <c:forEach items="${parsedEdi.billingProviders}" var="provider" varStatus="status">
++                                <div class="provider-info" style="margin-bottom: 15px;">
++                                    <h5>Provider ${status.count}</h5>
++                                    <table class="data-table">
++                                        <tr>
++                                            <th style="width: 200px;">Field</th>
++                                            <th>Value</th>
++                                        </tr>
++                                        <tr>
++                                            <td>Hierarchical Level</td>
++                                            <td><c:out value="${provider.hierarchicalLevel}"/></td>
++                                        </tr>
++                                        <tr>
++                                            <td>Provider Name</td>
++                                            <td><c:out value="${provider.providerName}"/></td>
++                                        </tr>
++                                        <tr>
++                                            <td>NPI</td>
++                                            <td><c:out value="${provider.npi}"/></td>
++                                        </tr>
++                                        <tr>
++                                            <td>Tax ID</td>
++                                            <td><c:out value="${provider.taxId}"/></td>
++                                        </tr>
++                                        <tr>
++                                            <td>Address</td>
++                                            <td><c:out value="${provider.address}"/></td>
++                                        </tr>
++                                        <tr>
++                                            <td>City, State ZIP</td>
++                                            <td><c:out value="${provider.city}"/> <c:out value="${provider.state}"/> <c:out value="${provider.zipCode}"/></td>
++                                        </tr>
++                                    </table>
++                                </div>
++                            </c:forEach>
++                        </div>
++                    </div>
++                </c:if>
++
++                <!-- Subscribers -->
++                <c:if test="${not empty parsedEdi.subscribers}">
++                    <div class="segment-section">
++                        <div class="segment-header">Subscribers (${fn:length(parsedEdi.subscribers)} found)</div>
++                        <div class="segment-body">
++                            <c:forEach items="${parsedEdi.subscribers}" var="subscriber" varStatus="status">
++                                <div class="subscriber-info" style="margin-bottom: 15px;">
++                                    <h5>Subscriber ${status.count}</h5>
++                                    <table class="data-table">
++                                        <tr>
++                                            <th style="width: 200px;">Field</th>
++                                            <th>Value</th>
++                                        </tr>
++                                        <tr>
++                                            <td>Hierarchical Level</td>
++                                            <td><c:out value="${subscriber.hierarchicalLevel}"/></td>
++                                        </tr>
++                                        <tr>
++                                            <td>Subscriber Name</td>
++                                            <td><c:out value="${subscriber.subscriberName}"/></td>
++                                        </tr>
++                                        <tr>
++                                            <td>Member ID</td>
++                                            <td><c:out value="${subscriber.memberId}"/></td>
++                                        </tr>
++                                        <tr>
++                                            <td>Relationship Code</td>
++                                            <td><c:out value="${subscriber.relationshipCode}"/></td>
++                                        </tr>
++                                        <tr>
++                                            <td>Date of Birth</td>
++                                            <td><c:out value="${subscriber.dateOfBirth}"/></td>
++                                        </tr>
++                                        <tr>
++                                            <td>Gender</td>
++                                            <td><c:out value="${subscriber.gender}"/></td>
++                                        </tr>
++                                    </table>
++                                </div>
++                            </c:forEach>
++                        </div>
++                    </div>
++                </c:if>
++
++                <!-- Patients -->
++                <c:if test="${not empty parsedEdi.patients}">
++                    <div class="segment-section">
++                        <div class="segment-header">Patients (${fn:length(parsedEdi.patients)} found)</div>
++                        <div class="segment-body">
++                            <c:forEach items="${parsedEdi.patients}" var="patient" varStatus="status">
++                                <div class="patient-info" style="margin-bottom: 15px;">
++                                    <h5>Patient ${status.count}</h5>
++                                    <table class="data-table">
++                                        <tr>
++                                            <th style="width: 200px;">Field</th>
++                                            <th>Value</th>
++                                        </tr>
++                                        <tr>
++                                            <td>Hierarchical Level</td>
++                                            <td><c:out value="${patient.hierarchicalLevel}"/></td>
++                                        </tr>
++                                        <tr>
++                                            <td>Patient Name</td>
++                                            <td><c:out value="${patient.patientName}"/></td>
++                                        </tr>
++                                        <tr>
++                                            <td>Date of Birth</td>
++                                            <td><c:out value="${patient.dateOfBirth}"/></td>
++                                        </tr>
++                                        <tr>
++                                            <td>Gender</td>
++                                            <td><c:out value="${patient.gender}"/></td>
++                                        </tr>
++                                        <tr>
++                                            <td>Relationship Code</td>
++                                            <td><c:out value="${patient.relationshipCode}"/></td>
++                                        </tr>
++                                    </table>
++                                </div>
++                            </c:forEach>
++                        </div>
++                    </div>
++                </c:if>
++
++                <!-- Claims -->
++                <c:if test="${not empty parsedEdi.claims}">
++                    <div class="segment-section">
++                        <div class="segment-header">Claims (${fn:length(parsedEdi.claims)} found)</div>
++                        <div class="segment-body">
++                            <c:forEach items="${parsedEdi.claims}" var="claim" varStatus="status">
++                                <div class="claim-info" style="margin-bottom: 20px;">
++                                    <h5>Claim ${status.count}</h5>
++                                    <table class="data-table">
++                                        <tr>
++                                            <th style="width: 200px;">Field</th>
++                                            <th>Value</th>
++                                        </tr>
++                                        <tr>
++                                            <td>Claim Submitter Identifier</td>
++                                            <td><c:out value="${claim.claimSubmitterIdentifier}"/></td>
++                                        </tr>
++                                        <tr>
++                                            <td>Total Claim Charge Amount</td>
++                                            <td><c:out value="${claim.totalClaimChargeAmount}"/></td>
++                                        </tr>
++                                        <tr>
++                                            <td>Place of Service Code</td>
++                                            <td><c:out value="${claim.placeOfServiceCode}"/></td>
++                                        </tr>
++                                        <tr>
++                                            <td>Service From Date</td>
++                                            <td><c:out value="${claim.serviceFromDate}"/></td>
++                                        </tr>
++                                        <tr>
++                                            <td>Service To Date</td>
++                                            <td><c:out value="${claim.serviceToDate}"/></td>
++                                        </tr>
++                                    </table>
++
++                                    <!-- Service Lines -->
++                                    <c:if test="${not empty claim.serviceLines}">
++                                        <h6 style="margin-top: 15px;">Service Lines (${fn:length(claim.serviceLines)} found)</h6>
++                                        <c:forEach items="${claim.serviceLines}" var="serviceLine" varStatus="lineStatus">
++                                            <div class="service-line">
++                                                <strong>Service Line ${lineStatus.count}</strong>
++                                                <table class="data-table" style="margin-top: 10px;">
++                                                    <tr>
++                                                        <th style="width: 200px;">Field</th>
++                                                        <th>Value</th>
++                                                    </tr>
++                                                    <tr>
++                                                        <td>Service Line Number</td>
++                                                        <td><c:out value="${serviceLine.serviceLineNumber}"/></td>
++                                                    </tr>
++                                                    <tr>
++                                                        <td>Procedure Code</td>
++                                                        <td><c:out value="${serviceLine.procedureCode}"/></td>
++                                                    </tr>
++                                                    <tr>
++                                                        <td>Service Unit Count</td>
++                                                        <td><c:out value="${serviceLine.serviceUnitCount}"/></td>
++                                                    </tr>
++                                                    <tr>
++                                                        <td>Line Item Charge Amount</td>
++                                                        <td><c:out value="${serviceLine.lineItemChargeAmount}"/></td>
++                                                    </tr>
++                                                    <tr>
++                                                        <td>Diagnosis Code Pointer</td>
++                                                        <td><c:out value="${serviceLine.diagnosisCodePointer}"/></td>
++                                                    </tr>
++                                                </table>
++                                            </div>
++                                        </c:forEach>
++                                    </c:if>
++                                </div>
++                            </c:forEach>
++                        </div>
++                    </div>
++                </c:if>
++
++                <!-- Transaction Set Trailer -->
++                <c:if test="${not empty parsedEdi.transactionSetTrailer}">
++                    <div class="segment-section">
++                        <div class="segment-header">Transaction Set Trailer (SE)</div>
++                        <div class="segment-body">
++                            <code>${parsedEdi.transactionSetTrailer}</code>
++                        </div>
++                    </div>
++                </c:if>
++
++            </div>
++        </jsp:attribute>
++    </b:section>
++</c:if>
++
++<script type="text/javascript">
++    $(function() {
++        // Auto-resize textarea based on content
++        $('#ediContent').on('input', function() {
++            this.style.height = 'auto';
++            this.style.height = this.scrollHeight + 'px';
++        });
++
++        // Disable implicit form submission on Enter key
++        $('#ediContent').on('keypress', function(e) {
++            if (e.which === 13) {
++                e.stopPropagation();
++            }
++        });
++
++        // Show loading indicator on form submission
++        $('form').on('submit', function() {
++            var $btn = $(this).find('button[type="submit"]:focus, input[type="submit"]:focus');
++            if ($btn.length) {
++                $btn.prop('disabled', true).append(' <i class="fa fa-spinner fa-spin"></i>');
++            }
++        });
++    });
++</script>
++
++</body>
++</html>
+diff --git a/util/src/main/resources/messages.properties b/util/src/main/resources/messages.properties
+index 38e0daa787f..eeaa6434338 100644
+--- a/util/src/main/resources/messages.properties
++++ b/util/src/main/resources/messages.properties
+@@ -28244,3 +28244,6 @@ msg.qa.status.change=The status has been changed to
+ msg.qa.privilege.err=Sorry! You do not have sufficient privilege to take this action
+ msg.dashboard.count.update=Your Dashboard count has been updated. Please refresh to see updated data
+ gerr.open.resolution.investigator.warning.message=GER Resolutions that have been opened within the last 13 months are shown here. To find a specific set of records, please use the GER Resolution Search.
++label.bill.edi.837.viewer=EDI 837 Viewer
++label.bill.edi.837.content.input=EDI 837 Content Input
++label.bill.edi.837.parsed.content=Parsed EDI 837 Content
+\ No newline at end of file
