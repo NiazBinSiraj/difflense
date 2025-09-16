@@ -222,8 +222,8 @@ window.Pages = {
                 </div>
 
                 <!-- Diff Output -->
-                <div id="diff-output" class="hidden">
-                    <div class="bg-white rounded-lg shadow-lg overflow-hidden">
+                <div id="diff-output" class="hidden w-full">
+                    <div class="bg-white rounded-lg shadow-lg overflow-x-auto">
                         <div class="bg-gray-50 px-6 py-3 border-b border-gray-200">
                             <div class="flex justify-between items-center">
                                 <h3 class="text-lg font-medium text-gray-900">Diff Results</h3>
