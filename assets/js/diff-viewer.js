@@ -11,6 +11,7 @@ window.DiffViewer = {
     init() {
         this.setupEventListeners();
         this.loadSampleIfRequested();
+        this.loadSharedDiffIfPresent();
     },
 
     /**
@@ -85,6 +86,33 @@ window.DiffViewer = {
         const downloadDiffBtn = document.getElementById('download-diff');
         if (downloadDiffBtn) {
             downloadDiffBtn.addEventListener('click', () => this.downloadDiff());
+        }
+
+        // Share diff button
+        const shareDiffBtn = document.getElementById('share-diff');
+        if (shareDiffBtn) {
+            shareDiffBtn.addEventListener('click', () => this.showShareModal());
+        }
+
+        // Share modal event listeners
+        const closeModalBtn = document.getElementById('close-modal');
+        if (closeModalBtn) {
+            closeModalBtn.addEventListener('click', () => this.hideShareModal());
+        }
+
+        const copyShareUrlBtn = document.getElementById('copy-share-url');
+        if (copyShareUrlBtn) {
+            copyShareUrlBtn.addEventListener('click', () => this.copyShareUrl());
+        }
+
+        // Close modal when clicking outside
+        const shareModal = document.getElementById('share-modal');
+        if (shareModal) {
+            shareModal.addEventListener('click', (e) => {
+                if (e.target === shareModal) {
+                    this.hideShareModal();
+                }
+            });
         }
     },
 
@@ -672,5 +700,175 @@ window.DiffViewer = {
         const maxHeight = Math.max(leftHeight, rightHeight);
         leftPanel.style.height = maxHeight + 'px';
         rightPanel.style.height = maxHeight + 'px';
+    },
+
+    /**
+     * Load shared diff content from URL parameter if present
+     */
+    loadSharedDiffIfPresent() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const sharedDiff = urlParams.get('diff');
+        
+        if (sharedDiff) {
+            try {
+                // Validate base64 input before decoding
+                if (!this.isValidBase64(sharedDiff)) {
+                    this.showMessage('Invalid share URL format - corrupted or malformed link', 'error');
+                    return;
+                }
+                
+                // Decode base64 content
+                const decodedDiff = atob(sharedDiff);
+                
+                // Validate that decoded content is not empty
+                if (!decodedDiff.trim()) {
+                    this.showMessage('Shared diff is empty or invalid', 'error');
+                    return;
+                }
+                
+                // Set the decoded content in the textarea
+                const diffInput = document.getElementById('diff-input');
+                if (diffInput) {
+                    diffInput.value = decodedDiff;
+                    // Automatically process the diff
+                    this.processDiff();
+                }
+            } catch (error) {
+                console.error('Error loading shared diff:', error);
+                if (error.name === 'InvalidCharacterError') {
+                    this.showMessage('Invalid share URL - contains invalid characters', 'error');
+                } else {
+                    this.showMessage('Failed to load shared diff - URL may be corrupted', 'error');
+                }
+            }
+        }
+    },
+
+    /**
+     * Generate shareable URL with base64 encoded diff content
+     */
+    generateShareableUrl(diffContent) {
+        try {
+            // Encode diff content to base64
+            const encodedDiff = btoa(diffContent);
+            
+            // Create URL with encoded diff parameter
+            const baseUrl = window.location.origin + window.location.pathname;
+            const shareUrl = `${baseUrl}?diff=${encodedDiff}`;
+            
+            return shareUrl;
+        } catch (error) {
+            console.error('Error generating shareable URL:', error);
+            throw new Error('Failed to generate shareable URL');
+        }
+    },
+
+    /**
+     * Show share modal with generated URL
+     */
+    showShareModal() {
+        if (!this.currentDiff || !this.currentDiff.rawContent) {
+            this.showMessage('No diff content to share', 'warning');
+            return;
+        }
+
+        try {
+            // Generate shareable URL
+            const shareUrl = this.generateShareableUrl(this.currentDiff.rawContent);
+            
+            // Show modal
+            const modal = document.getElementById('share-modal');
+            const shareUrlInput = document.getElementById('share-url');
+            
+            if (modal && shareUrlInput) {
+                shareUrlInput.value = shareUrl;
+                modal.classList.remove('hidden');
+            }
+        } catch (error) {
+            this.showMessage('Error generating share URL: ' + error.message, 'error');
+        }
+    },
+
+    /**
+     * Copy share URL to clipboard
+     */
+    async copyShareUrl() {
+        const shareUrlInput = document.getElementById('share-url');
+        const copySuccess = document.getElementById('copy-success');
+        
+        if (!shareUrlInput) return;
+
+        try {
+            await navigator.clipboard.writeText(shareUrlInput.value);
+            
+            // Show success message
+            if (copySuccess) {
+                copySuccess.classList.remove('hidden');
+                setTimeout(() => {
+                    copySuccess.classList.add('hidden');
+                }, 3000);
+            }
+        } catch (error) {
+            // Fallback for older browsers
+            shareUrlInput.select();
+            document.execCommand('copy');
+            
+            if (copySuccess) {
+                copySuccess.classList.remove('hidden');
+                setTimeout(() => {
+                    copySuccess.classList.add('hidden');
+                }, 3000);
+            }
+        }
+    },
+
+    /**
+     * Hide share modal
+     */
+    hideShareModal() {
+        const modal = document.getElementById('share-modal');
+        const copySuccess = document.getElementById('copy-success');
+        
+        if (modal) {
+            modal.classList.add('hidden');
+        }
+        
+        if (copySuccess) {
+            copySuccess.classList.add('hidden');
+        }
+    },
+
+    /**
+     * Validate base64 string format
+     */
+    isValidBase64(str) {
+        // Check if string is empty
+        if (!str || typeof str !== 'string') {
+            return false;
+        }
+        
+        // Remove any whitespace
+        str = str.trim();
+        
+        // Check if string length is valid for base64 (must be multiple of 4)
+        if (str.length % 4 !== 0) {
+            return false;
+        }
+        
+        // Check if string contains only valid base64 characters
+        const base64Regex = /^[A-Za-z0-9+/]*={0,2}$/;
+        if (!base64Regex.test(str)) {
+            return false;
+        }
+        
+        // Additional check: try to decode a small portion to verify it's valid
+        try {
+            // Test with first few characters if string is long
+            const testStr = str.length > 100 ? str.substring(0, 100) : str;
+            atob(testStr);
+            return true;
+        } catch (e) {
+            return false;
+        }
     }
 };

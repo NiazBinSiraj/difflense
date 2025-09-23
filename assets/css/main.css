@@ -443,3 +443,45 @@ select:focus {
 }
 
 /* Connection status and dark mode support could be added here */
+
+/* Share Modal Styles */
+#share-modal {
+    backdrop-filter: blur(4px);
+}
+
+#share-modal .bg-white {
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
+
+#share-url {
+    font-size: 13px;
+    word-break: break-all;
+}
+
+#copy-share-url {
+    transition: all 0.2s ease;
+    min-width: 60px;
+}
+
+#copy-share-url:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(37, 99, 235, 0.3);
+}
+
+#copy-success {
+    animation: fadeInOut 3s ease-in-out;
+}
+
+@keyframes fadeInOut {
+    0%, 100% { opacity: 0; transform: translateY(5px); }
+    20%, 80% { opacity: 1; transform: translateY(0); }
+}
+
+/* Share button styling */
+#share-diff {
+    transition: all 0.2s ease;
+}
+
+#share-diff:hover {
+    transform: translateY(-1px);
+}
