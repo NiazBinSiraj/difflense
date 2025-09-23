@@ -1,23 +1,23 @@
-# 🔍 DiffLens
+# DiffLens
 
 A clean, secure, and privacy-focused git diff viewer that processes everything client-side.
 
-## ✨ Features
+## Features
 
-- **🔒 Privacy First**: All processing happens locally in your browser
-- **⚡ Lightning Fast**: No server round trips required
-- **🎨 Clean Interface**: Beautiful, easy-to-read diff visualization
-- **📱 Responsive Design**: Works perfectly on all devices
-- **🔄 Multiple View Modes**: Side-by-side and unified diff views
-- **📁 File Support**: Upload diff files or paste content directly
-- **🎯 Syntax Highlighting**: Clean code highlighting with line numbers
-- **🆓 Open Source**: Free and open source forever
+- **Privacy First**: All processing happens locally in your browser
+- **Lightning Fast**: No server round trips required
+- **Clean Interface**: Beautiful, easy-to-read diff visualization
+- **Responsive Design**: Works perfectly on all devices
+- **Multiple View Modes**: Side-by-side and unified diff views
+- **File Support**: Upload diff files or paste content directly
+- **Syntax Highlighting**: Clean code highlighting with line numbers
+- **Open Source**: Free and open source forever
 
-## 🚀 Live Demo
+## Live Demo
 
 Visit [DiffLens](https://niazbinsiraj.github.io/difflense) to try it out!
 
-## 🔧 Local Development
+## Local Development
 
 DiffLens is a static website project. To run it locally:
 
@@ -41,21 +41,21 @@ DiffLens is a static website project. To run it locally:
 
 3. Open your browser and navigate to `http://localhost:8000`
 
-## 📖 How to Use
+## How to Use
 
 1. **Generate a diff**: Run `git diff` in your repository
 2. **Upload or paste**: Copy the diff output or upload a diff file
 3. **Choose view mode**: Select unified or side-by-side view
 4. **Analyze changes**: Review your code changes with syntax highlighting
 
-## 🛠️ Technology Stack
+## Technology Stack
 
 - **Frontend**: Vanilla JavaScript (ES6+)
 - **Styling**: TailwindCSS
 - **Architecture**: Client-side only (no backend required)
 - **Hosting**: GitHub Pages ready
 
-## 🤝 Contributing
+## Contributing
 
 We welcome contributions! Here's how you can help:
 
@@ -74,11 +74,11 @@ We welcome contributions! Here's how you can help:
 - Test thoroughly across different browsers
 - Keep the design clean and minimal
 
-## 📄 License
+## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-## 🔒 Privacy & Security
+## Privacy & Security
 
 DiffLens is designed with privacy as a core principle:
 
@@ -88,16 +88,16 @@ DiffLens is designed with privacy as a core principle:
 - **Offline Capable**: Works completely offline once loaded
 - **Open Source**: Full transparency with open source code
 
-## 🙏 Acknowledgments
+## Acknowledgments
 
 - Thanks to all contributors who help make DiffLens better
 - Inspired by the need for privacy-focused developer tools
-- Built with ❤️ for the developer community
+- Built for the developer community
 
-## 📞 Support
+## Support
 
-- 🐛 [Report Issues](https://github.com/NiazBinSiraj/difflense/issues)
-- 💬 [Start a Discussion](https://github.com/NiazBinSiraj/difflense/discussions)
+- [Report Issues](https://github.com/NiazBinSiraj/difflense/issues)
+- [Start a Discussion](https://github.com/NiazBinSiraj/difflense/discussions)
 - ⭐ [Star the Repository](https://github.com/NiazBinSiraj/difflense)
 
 ---
