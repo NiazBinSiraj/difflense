@@ -158,119 +158,53 @@
                     </div>
                 </div>
 
-                <!-- Contact Form -->
+                <!-- FAQ Section -->
                 <div class="bg-white rounded-lg shadow-lg p-8">
-                    <h2 class="text-2xl font-bold text-gray-900 mb-6">Send a Message</h2>
+                    <h2 class="text-2xl font-bold text-gray-900 mb-6">Frequently Asked Questions</h2>
                     
-                    <form id="contact-form" class="space-y-6">
+                    <div class="space-y-6">
                         <div>
-                            <label for="name" class="block text-sm font-medium text-gray-700 mb-2">
-                                Name *
-                            </label>
-                            <input type="text" id="name" name="name" required
-                                   class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-primary focus:border-primary">
-                        </div>
-
-                        <div>
-                            <label for="email" class="block text-sm font-medium text-gray-700 mb-2">
-                                Email *
-                            </label>
-                            <input type="email" id="email" name="email" required
-                                   class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-primary focus:border-primary">
+                            <h3 class="text-lg font-semibold text-gray-900 mb-2">Is DiffLens really free?</h3>
+                            <p class="text-gray-600">
+                                Yes! DiffLens is completely free and open source. You can use it, modify it, and distribute it 
+                                under the terms of our open source license.
+                            </p>
                         </div>
 
                         <div>
-                            <label for="subject" class="block text-sm font-medium text-gray-700 mb-2">
-                                Subject *
-                            </label>
-                            <select id="subject" name="subject" required
-                                    class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-primary focus:border-primary">
-                                <option value="">Select a subject</option>
-                                <option value="bug-report">Bug Report</option>
-                                <option value="feature-request">Feature Request</option>
-                                <option value="collaboration">Collaboration</option>
-                                <option value="general">General Inquiry</option>
-                                <option value="other">Other</option>
-                            </select>
+                            <h3 class="text-lg font-semibold text-gray-900 mb-2">How do you handle my code/data?</h3>
+                            <p class="text-gray-600">
+                                DiffLens processes everything client-side in your browser. Your code never leaves your machine 
+                                or gets transmitted to any server. This ensures complete privacy and security.
+                            </p>
                         </div>
 
                         <div>
-                            <label for="message" class="block text-sm font-medium text-gray-700 mb-2">
-                                Message *
-                            </label>
-                            <textarea id="message" name="message" rows="5" required
-                                      class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-primary focus:border-primary"
-                                      placeholder="Tell us more about your inquiry..."></textarea>
+                            <h3 class="text-lg font-semibold text-gray-900 mb-2">Can I contribute to the project?</h3>
+                            <p class="text-gray-600">
+                                Absolutely! We welcome contributions of all kinds. Check out our 
+                                <a href="contribute.html" class="text-primary hover:text-primary-dark">contribute page</a> 
+                                for guidelines on how to get started.
+                            </p>
                         </div>
 
-                        <div class="bg-yellow-50 border border-yellow-200 rounded-md p-4">
-                            <div class="flex">
-                                <div class="flex-shrink-0">
-                                    <svg class="h-5 w-5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20">
-                                        <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
-                                    </svg>
-                                </div>
-                                <div class="ml-3">
-                                    <p class="text-sm text-yellow-700">
-                                        <strong>Note:</strong> This is a demo form. For real inquiries, please use GitHub Issues or Discussions above.
-                                    </p>
-                                </div>
-                            </div>
+                        <div>
+                            <h3 class="text-lg font-semibold text-gray-900 mb-2">What diff formats are supported?</h3>
+                            <p class="text-gray-600">
+                                Currently, DiffLens supports standard git diff format. We're working on adding support for 
+                                other formats like unified diff, context diff, and more.
+                            </p>
                         </div>
 
-                        <button type="submit" class="w-full btn-primary">
-                            Send Message
-                        </button>
-                    </form>
-                </div>
-            </div>
-
-            <!-- FAQ Section -->
-            <div class="bg-white rounded-lg shadow-lg p-8 mb-8">
-                <h2 class="text-2xl font-bold text-gray-900 mb-6">Frequently Asked Questions</h2>
-                
-                <div class="space-y-6">
-                    <div>
-                        <h3 class="text-lg font-semibold text-gray-900 mb-2">Is DiffLens really free?</h3>
-                        <p class="text-gray-600">
-                            Yes! DiffLens is completely free and open source. You can use it, modify it, and distribute it 
-                            under the terms of our open source license.
-                        </p>
-                    </div>
-
-                    <div>
-                        <h3 class="text-lg font-semibold text-gray-900 mb-2">How do you handle my code/data?</h3>
-                        <p class="text-gray-600">
-                            DiffLens processes everything client-side in your browser. Your code never leaves your machine 
-                            or gets transmitted to any server. This ensures complete privacy and security.
-                        </p>
-                    </div>
-
-                    <div>
-                        <h3 class="text-lg font-semibold text-gray-900 mb-2">Can I contribute to the project?</h3>
-                        <p class="text-gray-600">
-                            Absolutely! We welcome contributions of all kinds. Check out our 
-                            <a href="contribute.html" class="text-primary hover:text-primary-dark">contribute page</a> 
-                            for guidelines on how to get started.
-                        </p>
-                    </div>
-
-                    <div>
-                        <h3 class="text-lg font-semibold text-gray-900 mb-2">What diff formats are supported?</h3>
-                        <p class="text-gray-600">
-                            Currently, DiffLens supports standard git diff format. We're working on adding support for 
-                            other formats like unified diff, context diff, and more.
-                        </p>
-                    </div>
-
-                    <div>
-                        <h3 class="text-lg font-semibold text-gray-900 mb-2">How can I report a bug?</h3>
-                        <p class="text-gray-600">
-                            The best way to report bugs is through our 
-                            <a href="https://github.com/NiazBinSiraj/difflense/issues" target="_blank" rel="noopener noreferrer" 
-                               class="text-primary hover:text-primary-dark">GitHub Issues</a>. 
-                            Please include as much detail as possible to help us reproduce and fix the issue.
-                        </p>
+                        <div>
+                            <h3 class="text-lg font-semibold text-gray-900 mb-2">How can I report a bug?</h3>
+                            <p class="text-gray-600">
+                                The best way to report bugs is through our 
+                                <a href="https://github.com/NiazBinSiraj/difflense/issues" target="_blank" rel="noopener noreferrer" 
+                                   class="text-primary hover:text-primary-dark">GitHub Issues</a>. 
+                                Please include as much detail as possible to help us reproduce and fix the issue.
+                            </p>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -342,20 +276,6 @@
             // Initialize GitHub integration
             if (window.GitHubIntegration) {
                 window.GitHubIntegration.init();
-            }
-
-            // Handle contact form submission
-            const contactForm = document.getElementById('contact-form');
-            if (contactForm) {
-                contactForm.addEventListener('submit', function(e) {
-                    e.preventDefault();
-                    
-                    // Show success message (this is just a demo)
-                    alert('Thank you for your message! This is a demo form. For real inquiries, please use GitHub Issues or Discussions.');
-                    
-                    // Reset form
-                    contactForm.reset();
-                });
             }
         });
     </script>
