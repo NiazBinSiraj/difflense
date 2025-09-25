@@ -8,10 +8,10 @@ window.DiffViewer = {
     /**
      * Initialize the diff viewer
      */
-    init() {
+    async init() {
         this.setupEventListeners();
         this.loadSampleIfRequested();
-        this.loadSharedDiffIfPresent();
+        await this.loadSharedDiffIfPresent();
     },
 
     /**
@@ -145,7 +145,6 @@ window.DiffViewer = {
             this.renderDiff(this.currentDiff);
             
         } catch (error) {
-            console.error('Error processing diff:', error);
             this.showMessage('Error processing diff: ' + error.message, 'error');
         }
     },
@@ -516,7 +515,6 @@ window.DiffViewer = {
      */
     updateStatsDisplay(stats) {
         // This could be enhanced to show stats in the header
-        console.log('Diff Stats:', stats);
     },
 
     /**
@@ -532,7 +530,6 @@ window.DiffViewer = {
             await navigator.clipboard.writeText(this.currentDiff.rawContent);
             this.showMessage('Diff copied to clipboard!', 'success');
         } catch (error) {
-            console.error('Failed to copy to clipboard:', error);
             this.showMessage('Failed to copy to clipboard', 'error');
         }
     },
@@ -705,7 +702,7 @@ window.DiffViewer = {
     /**
      * Load shared diff content from URL parameter if present
      */
-    loadSharedDiffIfPresent() {
+    async loadSharedDiffIfPresent() {
         const urlParams = new URLSearchParams(window.location.search);
         const sharedDiff = urlParams.get('diff');
         
@@ -717,8 +714,41 @@ window.DiffViewer = {
                     return;
                 }
                 
-                // Decode base64 content
-                const decodedDiff = atob(sharedDiff);
+                let decodedDiff;
+                
+                try {
+                    // Try to decompress first (new format with compression)
+                    const compressedData = this.base64ToUint8Array(sharedDiff);
+                    
+                    // Check if this looks like compressed data (has compression type indicator)
+                    if (compressedData.length > 0 && (compressedData[0] === 0 || compressedData[0] === 1 || compressedData[0] === 2)) {
+                        decodedDiff = await this.decompressBrotli(compressedData);
+                    } else {
+                        // Fallback to old format (direct base64 decoding)
+                        // Need to convert back to regular base64 for atob
+                        let regularBase64 = sharedDiff
+                            .replace(/-/g, '+')
+                            .replace(/_/g, '/');
+                        while (regularBase64.length % 4) {
+                            regularBase64 += '=';
+                        }
+                        decodedDiff = atob(regularBase64);
+                    }
+                } catch (compressionError) {
+                    // If compression fails, try old format
+                    try {
+                        // Convert URL-safe base64 to regular base64
+                        let regularBase64 = sharedDiff
+                            .replace(/-/g, '+')
+                            .replace(/_/g, '/');
+                        while (regularBase64.length % 4) {
+                            regularBase64 += '=';
+                        }
+                        decodedDiff = atob(regularBase64);
+                    } catch (legacyError) {
+                        throw new Error('Unable to decode diff content in either new or legacy format');
+                    }
+                }
                 
                 // Validate that decoded content is not empty
                 if (!decodedDiff.trim()) {
@@ -734,9 +764,11 @@ window.DiffViewer = {
                     this.processDiff();
                 }
             } catch (error) {
-                console.error('Error loading shared diff:', error);
+                this.showMessage('Error loading shared diff: ' + error.message, 'error');
                 if (error.name === 'InvalidCharacterError') {
                     this.showMessage('Invalid share URL - contains invalid characters', 'error');
+                } else if (error.message.includes('decompress')) {
+                    this.showMessage('Failed to decompress shared diff - URL may be corrupted or from an older version', 'error');
                 } else {
                     this.showMessage('Failed to load shared diff - URL may be corrupted', 'error');
                 }
@@ -745,12 +777,189 @@ window.DiffViewer = {
     },
 
     /**
-     * Generate shareable URL with base64 encoded diff content
+     * Compress string using Brotli compression (with gzip fallback)
      */
-    generateShareableUrl(diffContent) {
+    async compressBrotli(str) {
         try {
-            // Encode diff content to base64
-            const encodedDiff = btoa(diffContent);
+            // Check if CompressionStream is available
+            if (typeof CompressionStream === 'undefined') {
+                // Fallback to simple base64 encoding for older browsers
+                const encoder = new TextEncoder();
+                const data = encoder.encode(str);
+                const result = new Uint8Array(data.length + 1);
+                result[0] = 2; // Special marker for uncompressed legacy format
+                result.set(data, 1);
+                return result;
+            }
+
+            const encoder = new TextEncoder();
+            const data = encoder.encode(str);
+            
+            // Try Brotli first, fall back to gzip if not supported
+            let compressionType = 'br';
+            let compressionStream;
+            
+            try {
+                compressionStream = new CompressionStream('br');
+            } catch (error) {
+                compressionType = 'gzip';
+                compressionStream = new CompressionStream('gzip');
+            }
+            
+            const writer = compressionStream.writable.getWriter();
+            const reader = compressionStream.readable.getReader();
+            
+            // Write data to compression stream
+            writer.write(data);
+            writer.close();
+            
+            // Read compressed data
+            const chunks = [];
+            let done = false;
+            
+            while (!done) {
+                const { value, done: readerDone } = await reader.read();
+                done = readerDone;
+                if (value) {
+                    chunks.push(value);
+                }
+            }
+            
+            // Combine chunks into single Uint8Array
+            const totalLength = chunks.reduce((acc, chunk) => acc + chunk.length, 0);
+            const result = new Uint8Array(totalLength + 1); // +1 for compression type indicator
+            
+            // First byte indicates compression type: 0 = gzip, 1 = brotli, 2 = uncompressed
+            result[0] = compressionType === 'br' ? 1 : 0;
+            
+            let offset = 1;
+            for (const chunk of chunks) {
+                result.set(chunk, offset);
+                offset += chunk.length;
+            }
+            
+            return result;
+        } catch (error) {
+            throw new Error('Failed to compress data');
+        }
+    },
+
+    /**
+     * Decompress Brotli compressed data (with gzip fallback detection)
+     */
+    async decompressBrotli(compressedData) {
+        try {
+            // First byte indicates compression type: 0 = gzip, 1 = brotli, 2 = uncompressed
+            const compressionType = compressedData[0];
+            const actualData = compressedData.slice(1);
+            
+            // Handle uncompressed legacy format
+            if (compressionType === 2) {
+                const decoder = new TextDecoder();
+                return decoder.decode(actualData);
+            }
+
+            // Check if DecompressionStream is available
+            if (typeof DecompressionStream === 'undefined') {
+                throw new Error('DecompressionStream not available - cannot decompress data');
+            }
+            
+            const compressionFormat = compressionType === 1 ? 'br' : 'gzip';
+            let decompressionStream;
+            
+            try {
+                decompressionStream = new DecompressionStream(compressionFormat);
+            } catch (error) {
+                // If the preferred format is not supported, try the other
+                const fallbackFormat = compressionFormat === 'br' ? 'gzip' : 'br';
+                decompressionStream = new DecompressionStream(fallbackFormat);
+            }
+            
+            const writer = decompressionStream.writable.getWriter();
+            const reader = decompressionStream.readable.getReader();
+            
+            // Write compressed data to decompression stream
+            writer.write(actualData);
+            writer.close();
+            
+            // Read decompressed data
+            const chunks = [];
+            let done = false;
+            
+            while (!done) {
+                const { value, done: readerDone } = await reader.read();
+                done = readerDone;
+                if (value) {
+                    chunks.push(value);
+                }
+            }
+            
+            // Combine chunks and decode to string
+            const totalLength = chunks.reduce((acc, chunk) => acc + chunk.length, 0);
+            const result = new Uint8Array(totalLength);
+            let offset = 0;
+            
+            for (const chunk of chunks) {
+                result.set(chunk, offset);
+                offset += chunk.length;
+            }
+            
+            const decoder = new TextDecoder();
+            return decoder.decode(result);
+        } catch (error) {
+            throw new Error('Failed to decompress data');
+        }
+    },
+
+    /**
+     * Convert Uint8Array to URL-safe base64 string
+     */
+    uint8ArrayToBase64(uint8Array) {
+        let binary = '';
+        const len = uint8Array.byteLength;
+        for (let i = 0; i < len; i++) {
+            binary += String.fromCharCode(uint8Array[i]);
+        }
+        // Convert to base64 and make it URL-safe
+        return btoa(binary)
+            .replace(/\+/g, '-')
+            .replace(/\//g, '_')
+            .replace(/=/g, '');
+    },
+
+    /**
+     * Convert URL-safe base64 string to Uint8Array
+     */
+    base64ToUint8Array(base64) {
+        // Convert from URL-safe base64 back to regular base64
+        let regularBase64 = base64
+            .replace(/-/g, '+')
+            .replace(/_/g, '/');
+        
+        // Add padding if necessary
+        while (regularBase64.length % 4) {
+            regularBase64 += '=';
+        }
+        
+        const binary = atob(regularBase64);
+        const len = binary.length;
+        const bytes = new Uint8Array(len);
+        for (let i = 0; i < len; i++) {
+            bytes[i] = binary.charCodeAt(i);
+        }
+        return bytes;
+    },
+
+    /**
+     * Generate shareable URL with Brotli compressed and base64 encoded diff content
+     */
+    async generateShareableUrl(diffContent) {
+        try {
+            // Compress diff content using Brotli (gzip fallback)
+            const compressedData = await this.compressBrotli(diffContent);
+            
+            // Convert compressed data to base64
+            const encodedDiff = this.uint8ArrayToBase64(compressedData);
             
             // Create URL with encoded diff parameter
             const baseUrl = window.location.origin + window.location.pathname;
@@ -758,7 +967,6 @@ window.DiffViewer = {
             
             return shareUrl;
         } catch (error) {
-            console.error('Error generating shareable URL:', error);
             throw new Error('Failed to generate shareable URL');
         }
     },
@@ -766,26 +974,32 @@ window.DiffViewer = {
     /**
      * Show share modal with generated URL
      */
-    showShareModal() {
+    async showShareModal() {
         if (!this.currentDiff || !this.currentDiff.rawContent) {
             this.showMessage('No diff content to share', 'warning');
             return;
         }
 
         try {
-            // Generate shareable URL
-            const shareUrl = this.generateShareableUrl(this.currentDiff.rawContent);
-            
-            // Show modal
+            // Show modal first with loading state
             const modal = document.getElementById('share-modal');
             const shareUrlInput = document.getElementById('share-url');
             
             if (modal && shareUrlInput) {
-                shareUrlInput.value = shareUrl;
+                shareUrlInput.value = 'Generating compressed link...';
                 modal.classList.remove('hidden');
+            }
+
+            // Generate shareable URL (now with compression)
+            const shareUrl = await this.generateShareableUrl(this.currentDiff.rawContent);
+            
+            // Update the input with the actual URL
+            if (shareUrlInput) {
+                shareUrlInput.value = shareUrl;
             }
         } catch (error) {
             this.showMessage('Error generating share URL: ' + error.message, 'error');
+            this.hideShareModal();
         }
     },
 
@@ -839,7 +1053,7 @@ window.DiffViewer = {
     },
 
     /**
-     * Validate base64 string format
+     * Validate base64 string format (supports both regular and URL-safe base64)
      */
     isValidBase64(str) {
         // Check if string is empty
@@ -850,21 +1064,24 @@ window.DiffViewer = {
         // Remove any whitespace
         str = str.trim();
         
-        // Check if string length is valid for base64 (must be multiple of 4)
-        if (str.length % 4 !== 0) {
-            return false;
-        }
-        
-        // Check if string contains only valid base64 characters
-        const base64Regex = /^[A-Za-z0-9+/]*={0,2}$/;
+        // Check if string contains only valid base64 characters (including URL-safe variants)
+        const base64Regex = /^[A-Za-z0-9+/\-_]*={0,2}$/;
         if (!base64Regex.test(str)) {
             return false;
         }
         
-        // Additional check: try to decode a small portion to verify it's valid
+        // Try to decode the string to verify it's valid base64
         try {
-            // Test with first few characters if string is long
-            const testStr = str.length > 100 ? str.substring(0, 100) : str;
+            // Convert URL-safe base64 to regular base64 for testing
+            let testStr = str
+                .replace(/-/g, '+')
+                .replace(/_/g, '/');
+            
+            // Add padding if necessary
+            while (testStr.length % 4) {
+                testStr += '=';
+            }
+            
             atob(testStr);
             return true;
         } catch (e) {

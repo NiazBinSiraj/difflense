@@ -253,7 +253,7 @@
             </div>
             <div class="p-6">
                 <p class="text-sm text-gray-600 mb-4">
-                    Share this diff with others using the link below. The diff content is encoded in the URL for privacy.
+                    Share this diff with others using the link below. The diff content is compressed and encoded in the URL for privacy and efficiency.
                 </p>
                 <div class="mb-4">
                     <label class="block text-sm font-medium text-gray-700 mb-2">
@@ -300,7 +300,9 @@
             
             // Initialize diff viewer
             if (window.DiffViewer) {
-                window.DiffViewer.init();
+                window.DiffViewer.init().catch(error => {
+                    console.error('Error initializing diff viewer:', error);
+                });
             }
             
             // Initialize GitHub integration
