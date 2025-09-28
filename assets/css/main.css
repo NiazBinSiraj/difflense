@@ -472,6 +472,16 @@ select:focus {
     animation: fadeInOut 3s ease-in-out;
 }
 
+/* Validation error styling */
+#share-validation-error {
+    border-left: 4px solid #ef4444;
+}
+
+#share-validation-error::before {
+    content: '⚠️ ';
+    margin-right: 0.5rem;
+}
+
 @keyframes fadeInOut {
     0%, 100% { opacity: 0; transform: translateY(5px); }
     20%, 80% { opacity: 1; transform: translateY(0); }

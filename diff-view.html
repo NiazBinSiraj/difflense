@@ -252,10 +252,12 @@
                 </button>
             </div>
             <div class="p-6">
-                <p class="text-sm text-gray-600 mb-4">
-                    Share this diff with others using the link below. The diff content is compressed and encoded in the URL for privacy and efficiency.
-                </p>
-                <div class="mb-4">
+                <div class="share-description-container">
+                    <p class="text-sm text-gray-600 mb-4">
+                        Share this diff with others using the link below. The diff content is compressed and encoded in the URL for privacy and efficiency.
+                    </p>
+                </div>
+                <div class="mb-4 share-url-container">
                     <label class="block text-sm font-medium text-gray-700 mb-2">
                         Shareable URL
                     </label>
@@ -277,6 +279,9 @@
                 </div>
                 <div id="copy-success" class="hidden text-sm text-green-600 mb-4">
                     ✓ URL copied to clipboard!
+                </div>
+                <div id="share-validation-error" class="hidden text-sm text-red-600 mb-4 p-3 bg-red-50 border border-red-200 rounded-md">
+                    <!-- Validation error message will be inserted here -->
                 </div>
             </div>
         </div>

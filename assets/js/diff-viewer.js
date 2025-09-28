@@ -965,9 +965,18 @@ window.DiffViewer = {
             const baseUrl = window.location.origin + window.location.pathname;
             const shareUrl = `${baseUrl}?diff=${encodedDiff}`;
             
+            // Validate URL length - URLs longer than 8000 characters may not work properly
+            if (shareUrl.length > 8000) {
+                throw new Error('The diff is too large to share via URL (exceeds 8000 character limit). Consider downloading the diff instead or sharing smaller portions.');
+            }
+            
             return shareUrl;
         } catch (error) {
-            throw new Error('Failed to generate shareable URL');
+            // Re-throw our specific validation errors, or provide generic message for other errors
+            if (error.message.includes('too large to share')) {
+                throw error;
+            }
+            throw new Error('Failed to generate shareable URL: ' + error.message);
         }
     },
 
@@ -984,10 +993,28 @@ window.DiffViewer = {
             // Show modal first with loading state
             const modal = document.getElementById('share-modal');
             const shareUrlInput = document.getElementById('share-url');
+            const validationError = document.getElementById('share-validation-error');
+            const urlContainer = document.querySelector('.share-url-container');
+            const copySuccess = document.getElementById('copy-success');
+            const shareDescription = document.querySelector('.share-description-container');
             
             if (modal && shareUrlInput) {
                 shareUrlInput.value = 'Generating compressed link...';
                 modal.classList.remove('hidden');
+                
+                // Show URL container, description and hide any previous validation errors and copy success
+                if (urlContainer) {
+                    urlContainer.classList.remove('hidden');
+                }
+                if (shareDescription) {
+                    shareDescription.classList.remove('hidden');
+                }
+                if (validationError) {
+                    validationError.classList.add('hidden');
+                }
+                if (copySuccess) {
+                    copySuccess.classList.add('hidden');
+                }
             }
 
             // Generate shareable URL (now with compression)
@@ -998,8 +1025,34 @@ window.DiffViewer = {
                 shareUrlInput.value = shareUrl;
             }
         } catch (error) {
-            this.showMessage('Error generating share URL: ' + error.message, 'error');
-            this.hideShareModal();
+            // Check if this is a URL length validation error
+            if (error.message.includes('too large to share')) {
+                // Show validation error and hide URL input/copy button, copy success, and description
+                const validationError = document.getElementById('share-validation-error');
+                const urlContainer = document.querySelector('.share-url-container');
+                const copySuccess = document.getElementById('copy-success');
+                const shareDescription = document.querySelector('.share-description-container');
+                
+                if (validationError) {
+                    validationError.textContent = error.message;
+                    validationError.classList.remove('hidden');
+                }
+                
+                if (urlContainer) {
+                    urlContainer.classList.add('hidden');
+                }
+                
+                if (copySuccess) {
+                    copySuccess.classList.add('hidden');
+                }
+                
+                if (shareDescription) {
+                    shareDescription.classList.add('hidden');
+                }
+            } else {
+                this.showMessage('Error generating share URL: ' + error.message, 'error');
+                this.hideShareModal();
+            }
         }
     },
 
@@ -1009,8 +1062,21 @@ window.DiffViewer = {
     async copyShareUrl() {
         const shareUrlInput = document.getElementById('share-url');
         const copySuccess = document.getElementById('copy-success');
+        const urlContainer = document.querySelector('.share-url-container');
         
         if (!shareUrlInput) return;
+
+        // Check if URL container is hidden - don't copy when validation failed
+        if (urlContainer && urlContainer.classList.contains('hidden')) {
+            this.showMessage('Cannot copy - the diff is too large to share via URL', 'warning');
+            return;
+        }
+
+        // Check if the input contains an error message instead of a valid URL
+        if (shareUrlInput.value.includes('Cannot generate link') || shareUrlInput.value.includes('Generating')) {
+            this.showMessage('No valid URL to copy', 'warning');
+            return;
+        }
 
         try {
             await navigator.clipboard.writeText(shareUrlInput.value);
@@ -1042,6 +1108,9 @@ window.DiffViewer = {
     hideShareModal() {
         const modal = document.getElementById('share-modal');
         const copySuccess = document.getElementById('copy-success');
+        const validationError = document.getElementById('share-validation-error');
+        const urlContainer = document.querySelector('.share-url-container');
+        const shareDescription = document.querySelector('.share-description-container');
         
         if (modal) {
             modal.classList.add('hidden');
@@ -1049,6 +1118,18 @@ window.DiffViewer = {
         
         if (copySuccess) {
             copySuccess.classList.add('hidden');
+        }
+        
+        if (validationError) {
+            validationError.classList.add('hidden');
+        }
+        
+        if (urlContainer) {
+            urlContainer.classList.remove('hidden');
+        }
+        
+        if (shareDescription) {
+            shareDescription.classList.remove('hidden');
         }
     },
 
