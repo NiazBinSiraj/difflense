@@ -15,7 +15,7 @@ A clean, secure, and privacy-focused git diff viewer that processes everything c
 
 ## Live Demo
 
-Visit [DiffLens](https://niazbinsiraj.github.io/difflense) to try it out!
+Visit [DiffLens](https://difflense.nbslabs.dev) to try it out!
 
 ## Local Development
 
@@ -23,7 +23,7 @@ DiffLens is a static website project. To run it locally:
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/NiazBinSiraj/difflense.git
+   git clone https://github.com/nbslabs/difflense.git
    cd difflense
    ```
 
@@ -96,9 +96,9 @@ DiffLens is designed with privacy as a core principle:
 
 ## Support
 
-- [Report Issues](https://github.com/NiazBinSiraj/difflense/issues)
-- [Start a Discussion](https://github.com/NiazBinSiraj/difflense/discussions)
-- ⭐ [Star the Repository](https://github.com/NiazBinSiraj/difflense)
+- [Report Issues](https://github.com/nbslabs/difflense/issues)
+- [Start a Discussion](https://github.com/nbslabs/difflense/discussions)
+- ⭐ [Star the Repository](https://github.com/nbslabs/difflense)
 
 ---
 

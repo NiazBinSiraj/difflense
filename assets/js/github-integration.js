@@ -2,7 +2,7 @@
  * GitHub Integration Module - Handles GitHub API interactions
  */
 window.GitHubIntegration = {
-    repoOwner: 'NiazBinSiraj',
+    repoOwner: 'nbslabs',
     repoName: 'difflense',
     
     /**
