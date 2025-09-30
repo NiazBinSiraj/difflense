@@ -442,6 +442,80 @@ select:focus {
     }
 }
 
+/* Tutorial Section Styles */
+#tutorial-content {
+    transition: max-height 0.3s ease-in-out, opacity 0.3s ease-in-out;
+    overflow: hidden;
+    max-height: 0;
+    opacity: 0;
+}
+
+#tutorial-content:not(.hidden) {
+    opacity: 1;
+}
+
+#tutorial-toggle {
+    transition: background-color 0.2s ease;
+}
+
+#tutorial-toggle:hover {
+    background-color: rgba(59, 130, 246, 0.05);
+}
+
+#tutorial-chevron {
+    transition: transform 0.2s ease;
+}
+
+.tutorial-command-block {
+    background-color: #1a1a1a;
+    border-radius: 0.375rem;
+    padding: 0.75rem;
+    margin-bottom: 0.5rem;
+    overflow-x: auto;
+}
+
+.tutorial-command-block code {
+    color: #4ade80;
+    font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', 'Consolas', 'source-code-pro', monospace;
+    font-size: 0.875rem;
+    font-weight: 500;
+}
+
+.tutorial-card {
+    transition: all 0.2s ease;
+    border: 1px solid #e5e7eb;
+}
+
+.tutorial-card:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    border-color: #d1d5db;
+}
+
+.tutorial-section-icon {
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0%, 100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.7;
+    }
+}
+
+/* Tutorial responsive adjustments */
+@media (max-width: 640px) {
+    #tutorial-content .grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .tutorial-command-block code {
+        font-size: 0.75rem;
+    }
+}
+
 /* Connection status and dark mode support could be added here */
 
 /* Share Modal Styles */

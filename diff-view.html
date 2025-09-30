@@ -112,6 +112,362 @@
                 </p>
             </div>
 
+            <!-- Tutorial Section -->
+            <div class="max-w-7xl mx-auto mb-8">
+                <div class="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg border border-blue-200 shadow-sm">
+                    <div class="p-6">
+                        <div class="flex items-center justify-between cursor-pointer" id="tutorial-toggle">
+                            <div class="flex items-center">
+                                <div class="flex-shrink-0 mr-4">
+                                    <svg class="h-8 w-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <h3 class="text-lg font-semibold text-gray-900">Git Diff Tutorial</h3>
+                                    <p class="text-sm text-gray-600 mt-1">Learn how to save git diff output to files for various scenarios - perfect for code reviews, patches, and documentation</p>
+                                </div>
+                            </div>
+                            <div class="flex-shrink-0">
+                                <svg id="tutorial-chevron" class="h-6 w-6 text-gray-500 transform transition-transform duration-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                                </svg>
+                            </div>
+                        </div>
+                        
+                        <div id="tutorial-content" class="hidden mt-6 border-t border-blue-200 pt-6">
+                            <!-- Basic Git Diff Commands -->
+                            <div class="mb-8">
+                                <h4 class="text-md font-semibold text-gray-800 mb-4 flex items-center">
+                                    <svg class="h-5 w-5 text-green-600 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                                    </svg>
+                                    Saving Basic Git Diffs to Files
+                                </h4>
+                                <div class="grid md:grid-cols-2 gap-4">
+                                    <div class="tutorial-card bg-white rounded-lg p-4">
+                                        <h5 class="font-medium text-gray-900 mb-2">Working Directory vs Staging</h5>
+                                        <div class="tutorial-command-block">
+                                            <code>git diff > unstaged-changes.diff</code>
+                                        </div>
+                                        <p class="text-sm text-gray-600">Save unstaged changes to a file for review or sharing</p>
+                                    </div>
+                                    <div class="tutorial-card bg-white rounded-lg p-4">
+                                        <h5 class="font-medium text-gray-900 mb-2">Staging vs Last Commit</h5>
+                                        <div class="tutorial-command-block">
+                                            <code>git diff --cached > staged-changes.diff</code>
+                                        </div>
+                                        <p class="text-sm text-gray-600">Save staged changes to file for commit review</p>
+                                    </div>
+                                    <div class="tutorial-card bg-white rounded-lg p-4">
+                                        <h5 class="font-medium text-gray-900 mb-2">Working Directory vs Commit</h5>
+                                        <div class="tutorial-command-block">
+                                            <code>git diff HEAD > all-changes.diff</code>
+                                        </div>
+                                        <p class="text-sm text-gray-600">Save all changes since last commit to file</p>
+                                    </div>
+                                    <div class="tutorial-card bg-white rounded-lg p-4">
+                                        <h5 class="font-medium text-gray-900 mb-2">Specific File Changes</h5>
+                                        <div class="tutorial-command-block">
+                                            <code>git diff path/to/file.js > file-changes.diff</code>
+                                        </div>
+                                        <p class="text-sm text-gray-600">Save changes for a specific file to a diff file</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Commit Comparisons -->
+                            <div class="mb-8">
+                                <h4 class="text-md font-semibold text-gray-800 mb-4 flex items-center">
+                                    <svg class="h-5 w-5 text-blue-600 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clip-rule="evenodd"/>
+                                    </svg>
+                                    Saving Commit vs Commit Comparisons
+                                </h4>
+                                <div class="grid md:grid-cols-2 gap-4">
+                                    <div class="tutorial-card bg-white rounded-lg p-4">
+                                        <h5 class="font-medium text-gray-900 mb-2">Between Two Commits</h5>
+                                        <div class="tutorial-command-block">
+                                            <code>git diff abc123..def456 > commit-comparison.diff</code>
+                                        </div>
+                                        <p class="text-sm text-gray-600">Save changes between two specific commits to file</p>
+                                    </div>
+                                    <div class="tutorial-card bg-white rounded-lg p-4">
+                                        <h5 class="font-medium text-gray-900 mb-2">Commit vs HEAD</h5>
+                                        <div class="tutorial-command-block">
+                                            <code>git diff abc123 > commit-vs-head.diff</code>
+                                        </div>
+                                        <p class="text-sm text-gray-600">Save comparison of commit with current HEAD to file</p>
+                                    </div>
+                                    <div class="tutorial-card bg-white rounded-lg p-4">
+                                        <h5 class="font-medium text-gray-900 mb-2">Last N Commits</h5>
+                                        <div class="tutorial-command-block">
+                                            <code>git diff HEAD~3..HEAD > last-3-commits.diff</code>
+                                        </div>
+                                        <p class="text-sm text-gray-600">Save changes from last 3 commits to file</p>
+                                    </div>
+                                    <div class="tutorial-card bg-white rounded-lg p-4">
+                                        <h5 class="font-medium text-gray-900 mb-2">Specific File Between Commits</h5>
+                                        <div class="tutorial-command-block">
+                                            <code>git diff abc123..def456 -- file.js > file-history.diff</code>
+                                        </div>
+                                        <p class="text-sm text-gray-600">Save specific file changes between commits to file</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Branch Comparisons -->
+                            <div class="mb-8">
+                                <h4 class="text-md font-semibold text-gray-800 mb-4 flex items-center">
+                                    <svg class="h-5 w-5 text-purple-600 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M7.707 3.293a1 1 0 010 1.414L5.414 7H11a7 7 0 017 7v2a1 1 0 11-2 0v-2a5 5 0 00-5-5H5.414l2.293 2.293a1 1 0 11-1.414 1.414L2.586 7l3.707-3.707a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                                    </svg>
+                                    Saving Branch Comparisons to Files
+                                </h4>
+                                <div class="grid md:grid-cols-2 gap-4">
+                                    <div class="tutorial-card bg-white rounded-lg p-4">
+                                        <h5 class="font-medium text-gray-900 mb-2">Branch vs Branch</h5>
+                                        <div class="tutorial-command-block">
+                                            <code>git diff main..feature-branch > branch-diff.patch</code>
+                                        </div>
+                                        <p class="text-sm text-gray-600">Save differences between two branches as patch file</p>
+                                    </div>
+                                    <div class="tutorial-card bg-white rounded-lg p-4">
+                                        <h5 class="font-medium text-gray-900 mb-2">Current Branch vs Remote</h5>
+                                        <div class="tutorial-command-block">
+                                            <code>git diff origin/main > remote-diff.diff</code>
+                                        </div>
+                                        <p class="text-sm text-gray-600">Save current branch vs remote branch differences</p>
+                                    </div>
+                                    <div class="tutorial-card bg-white rounded-lg p-4">
+                                        <h5 class="font-medium text-gray-900 mb-2">Three-way Merge Base</h5>
+                                        <div class="tutorial-command-block">
+                                            <code>git diff main...feature-branch > merge-base.diff</code>
+                                        </div>
+                                        <p class="text-sm text-gray-600">Save changes from common ancestor to feature branch</p>
+                                    </div>
+                                    <div class="tutorial-card bg-white rounded-lg p-4">
+                                        <h5 class="font-medium text-gray-900 mb-2">Branch Files Summary</h5>
+                                        <div class="tutorial-command-block">
+                                            <code>git diff main..feature --name-only > changed-files.txt</code>
+                                        </div>
+                                        <p class="text-sm text-gray-600">Save list of changed files between branches</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Advanced Options -->
+                            <div class="mb-8">
+                                <h4 class="text-md font-semibold text-gray-800 mb-4 flex items-center">
+                                    <svg class="h-5 w-5 text-orange-600 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M11.49 3.17c-.38-1.56-2.6-1.56-2.98 0a1.532 1.532 0 01-2.286.948c-1.372-.836-2.942.734-2.106 2.106.54.886.061 2.042-.947 2.287-1.561.379-1.561 2.6 0 2.978a1.532 1.532 0 01.947 2.287c-.836 1.372.734 2.942 2.106 2.106a1.532 1.532 0 012.287.947c.379 1.561 2.6 1.561 2.978 0a1.533 1.533 0 012.287-.947c1.372.836 2.942-.734 2.106-2.106a1.533 1.533 0 01.947-2.287c1.561-.379 1.561-2.6 0-2.978a1.532 1.532 0 01-.947-2.287c.836-1.372-.734-2.942-2.106-2.106a1.532 1.532 0 01-2.287-.947zM10 13a3 3 0 100-6 3 3 0 000 6z" clip-rule="evenodd"/>
+                                    </svg>
+                                    Advanced Diff Options for File Saving
+                                </h4>
+                                <div class="grid md:grid-cols-2 gap-4">
+                                    <div class="tutorial-card bg-white rounded-lg p-4">
+                                        <h5 class="font-medium text-gray-900 mb-2">Ignore Whitespace</h5>
+                                        <div class="tutorial-command-block">
+                                            <code>git diff -w > no-whitespace.diff</code>
+                                        </div>
+                                        <p class="text-sm text-gray-600">Save diff ignoring whitespace changes to file</p>
+                                    </div>
+                                    <div class="tutorial-card bg-white rounded-lg p-4">
+                                        <h5 class="font-medium text-gray-900 mb-2">Word-level Diff</h5>
+                                        <div class="tutorial-command-block">
+                                            <code>git diff --word-diff > word-diff.diff</code>
+                                        </div>
+                                        <p class="text-sm text-gray-600">Save word-level differences to file</p>
+                                    </div>
+                                    <div class="tutorial-card bg-white rounded-lg p-4">
+                                        <h5 class="font-medium text-gray-900 mb-2">Extended Context</h5>
+                                        <div class="tutorial-command-block">
+                                            <code>git diff -U10 > extended-context.diff</code>
+                                        </div>
+                                        <p class="text-sm text-gray-600">Save diff with 10 lines of context to file</p>
+                                    </div>
+                                    <div class="tutorial-card bg-white rounded-lg p-4">
+                                        <h5 class="font-medium text-gray-900 mb-2">Statistics Summary</h5>
+                                        <div class="tutorial-command-block">
+                                            <code>git diff --stat > diff-stats.txt</code>
+                                        </div>
+                                        <p class="text-sm text-gray-600">Save file change statistics to text file</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Output and Usage -->
+                            <div class="mb-6">
+                                <h4 class="text-md font-semibold text-gray-800 mb-4 flex items-center">
+                                    <svg class="h-5 w-5 text-red-600 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clip-rule="evenodd"/>
+                                    </svg>
+                                    Comprehensive Guide to Saving Git Diffs
+                                </h4>
+                                <div class="space-y-6">
+                                    <!-- Basic File Saving -->
+                                    <div class="tutorial-card bg-white rounded-lg p-4">
+                                        <h5 class="font-medium text-gray-900 mb-3">📁 Basic File Output Methods</h5>
+                                        <div class="grid md:grid-cols-2 gap-4">
+                                            <div>
+                                                <h6 class="text-sm font-medium text-gray-700 mb-2">Standard Output Redirection</h6>
+                                                <div class="space-y-1">
+                                                    <div class="tutorial-command-block text-xs">
+                                                        <code>git diff > changes.diff</code>
+                                                    </div>
+                                                    <div class="tutorial-command-block text-xs">
+                                                        <code>git diff --cached > staged.patch</code>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div>
+                                                <h6 class="text-sm font-medium text-gray-700 mb-2">Append to Existing File</h6>
+                                                <div class="space-y-1">
+                                                    <div class="tutorial-command-block text-xs">
+                                                        <code>git diff >> all-changes.diff</code>
+                                                    </div>
+                                                    <div class="tutorial-command-block text-xs">
+                                                        <code>git diff HEAD~1 >> history.patch</code>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Organized File Structure -->
+                                    <div class="tutorial-card bg-white rounded-lg p-4">
+                                        <h5 class="font-medium text-gray-900 mb-3">🗂️ Organized Diff File Structure</h5>
+                                        <div class="grid md:grid-cols-2 gap-4">
+                                            <div>
+                                                <h6 class="text-sm font-medium text-gray-700 mb-2">By Date and Time</h6>
+                                                <div class="tutorial-command-block text-xs">
+                                                    <code>git diff > "diff-$(date +%Y%m%d-%H%M%S).diff"</code>
+                                                </div>
+                                                <p class="text-xs text-gray-500 mt-1">Creates: diff-20241230-143022.diff</p>
+                                            </div>
+                                            <div>
+                                                <h6 class="text-sm font-medium text-gray-700 mb-2">By Branch and Feature</h6>
+                                                <div class="tutorial-command-block text-xs">
+                                                    <code>git diff main..feature > feature-branch-changes.patch</code>
+                                                </div>
+                                                <p class="text-xs text-gray-500 mt-1">Descriptive naming for review</p>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Multiple File Formats -->
+                                    <div class="tutorial-card bg-white rounded-lg p-4">
+                                        <h5 class="font-medium text-gray-900 mb-3">📋 Different Output Formats for Various Use Cases</h5>
+                                        <div class="grid md:grid-cols-3 gap-4">
+                                            <div>
+                                                <h6 class="text-sm font-medium text-gray-700 mb-2">Patch Files (.patch)</h6>
+                                                <div class="tutorial-command-block text-xs">
+                                                    <code>git diff > feature.patch</code>
+                                                </div>
+                                                <p class="text-xs text-gray-500 mt-1">For applying with git apply</p>
+                                            </div>
+                                            <div>
+                                                <h6 class="text-sm font-medium text-gray-700 mb-2">Text Files (.txt)</h6>
+                                                <div class="tutorial-command-block text-xs">
+                                                    <code>git diff --stat > summary.txt</code>
+                                                </div>
+                                                <p class="text-xs text-gray-500 mt-1">For documentation/reports</p>
+                                            </div>
+                                            <div>
+                                                <h6 class="text-sm font-medium text-gray-700 mb-2">Diff Files (.diff)</h6>
+                                                <div class="tutorial-command-block text-xs">
+                                                    <code>git diff HEAD~1 > review.diff</code>
+                                                </div>
+                                                <p class="text-xs text-gray-500 mt-1">Standard diff format</p>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Advanced Scenarios -->
+                                    <div class="tutorial-card bg-white rounded-lg p-4">
+                                        <h5 class="font-medium text-gray-900 mb-3">⚡ Advanced Saving Scenarios</h5>
+                                        <div class="space-y-3">
+                                            <div>
+                                                <h6 class="text-sm font-medium text-gray-700 mb-1">Save Multiple Comparisons</h6>
+                                                <div class="bg-gray-50 p-2 rounded text-xs font-mono">
+                                                    <div>git diff HEAD~1 > last-commit.diff</div>
+                                                    <div>git diff --cached > staged.diff</div>
+                                                    <div>git diff > unstaged.diff</div>
+                                                </div>
+                                            </div>
+                                            <div>
+                                                <h6 class="text-sm font-medium text-gray-700 mb-1">Conditional Saving (only if changes exist)</h6>
+                                                <div class="tutorial-command-block text-xs">
+                                                    <code>git diff --quiet || git diff > changes.diff</code>
+                                                </div>
+                                            </div>
+                                            <div>
+                                                <h6 class="text-sm font-medium text-gray-700 mb-1">Save with Metadata</h6>
+                                                <div class="bg-gray-50 p-2 rounded text-xs font-mono">
+                                                    <div>echo "# Diff generated on $(date)" > full-report.diff</div>
+                                                    <div>echo "# Branch: $(git branch --show-current)" >> full-report.diff</div>
+                                                    <div>git diff >> full-report.diff</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Cross-Platform Clipboard -->
+                                    <div class="tutorial-card bg-white rounded-lg p-4">
+                                        <h5 class="font-medium text-gray-900 mb-3">📋 Copy to Clipboard (Cross-Platform)</h5>
+                                        <div class="grid md:grid-cols-3 gap-4">
+                                            <div>
+                                                <h6 class="text-sm font-medium text-gray-700 mb-2">macOS</h6>
+                                                <div class="tutorial-command-block text-xs">
+                                                    <code>git diff | pbcopy</code>
+                                                </div>
+                                            </div>
+                                            <div>
+                                                <h6 class="text-sm font-medium text-gray-700 mb-2">Linux</h6>
+                                                <div class="tutorial-command-block text-xs">
+                                                    <code>git diff | xclip -selection clipboard</code>
+                                                </div>
+                                            </div>
+                                            <div>
+                                                <h6 class="text-sm font-medium text-gray-700 mb-2">Windows (PowerShell)</h6>
+                                                <div class="tutorial-command-block text-xs">
+                                                    <code>git diff | Set-Clipboard</code>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="mt-6 p-4 bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-md">
+                                    <p class="text-sm text-blue-800">
+                                        <strong>💡 Pro Tip:</strong> After saving your diff to a file, you can upload it directly to DiffLens using the file upload area above, or copy the file content and paste it into the text area. DiffLens will automatically parse and visualize your changes with syntax highlighting and multiple view options.
+                                    </p>
+                                </div>
+                            </div>
+
+                            <!-- Quick Examples -->
+                            <div class="bg-gray-50 rounded-lg p-4 border border-gray-200">
+                                <h5 class="font-medium text-gray-900 mb-3">🚀 Quick Start: Save Diffs to Files</h5>
+                                <div class="grid md:grid-cols-3 gap-3 text-sm">
+                                    <div class="bg-white p-3 rounded border">
+                                        <strong>Save Current Changes:</strong><br>
+                                        <code class="text-xs">git diff > changes.diff</code>
+                                    </div>
+                                    <div class="bg-white p-3 rounded border">
+                                        <strong>Save Branch Comparison:</strong><br>
+                                        <code class="text-xs">git diff main..feature > branch.patch</code>
+                                    </div>
+                                    <div class="bg-white p-3 rounded border">
+                                        <strong>Save Recent Commits:</strong><br>
+                                        <code class="text-xs">git diff HEAD~2..HEAD > recent.diff</code>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <!-- Input Section -->
             <div class="bg-white rounded-lg shadow-lg p-6 mb-8 max-w-7xl mx-auto">
                 <div class="grid md:grid-cols-2 gap-6 mb-6">
@@ -301,6 +657,48 @@
                 mobileMenuBtn.addEventListener('click', function() {
                     mobileMenu.classList.toggle('hidden');
                 });
+            }
+            
+            // Tutorial toggle functionality
+            const tutorialToggle = document.getElementById('tutorial-toggle');
+            const tutorialContent = document.getElementById('tutorial-content');
+            const tutorialChevron = document.getElementById('tutorial-chevron');
+            
+            if (tutorialToggle && tutorialContent && tutorialChevron) {
+                // Add smooth transition for maxHeight
+                tutorialContent.style.transition = 'max-height 0.8s ease-in-out';
+                tutorialContent.style.overflow = 'hidden';
+                
+                tutorialToggle.addEventListener('click', function() {
+                    const isHidden = tutorialContent.classList.contains('hidden');
+                    
+                    if (isHidden) {
+                        tutorialContent.classList.remove('hidden');
+                        tutorialContent.style.maxHeight = tutorialContent.scrollHeight + 'px';
+                        tutorialChevron.style.transform = 'rotate(180deg)';
+                        
+                        // Store preference
+                        localStorage.setItem('difflense-tutorial-open', 'true');
+                    } else {
+                        tutorialContent.style.maxHeight = '0px';
+                        tutorialChevron.style.transform = 'rotate(0deg)';
+                        
+                        setTimeout(() => {
+                            tutorialContent.classList.add('hidden');
+                        }, 800);
+                        
+                        // Store preference
+                        localStorage.setItem('difflense-tutorial-open', 'false');
+                    }
+                });
+                
+                // Check if user previously had tutorial open
+                const tutorialOpen = localStorage.getItem('difflense-tutorial-open');
+                if (tutorialOpen === 'true') {
+                    tutorialContent.classList.remove('hidden');
+                    tutorialContent.style.maxHeight = tutorialContent.scrollHeight + 'px';
+                    tutorialChevron.style.transform = 'rotate(180deg)';
+                }
             }
             
             // Initialize diff viewer
