@@ -4,6 +4,8 @@
 window.DiffViewer = {
     currentDiff: null,
     currentViewMode: 'unified',
+    sidebarVisible: false,
+    expandAllFiles: true, // Default to expanded
 
     /**
      * Initialize the diff viewer
@@ -12,6 +14,7 @@ window.DiffViewer = {
         this.setupEventListeners();
         this.loadSampleIfRequested();
         await this.loadSharedDiffIfPresent();
+        this.loadSettings();
     },
 
     /**
@@ -111,6 +114,42 @@ window.DiffViewer = {
             shareModal.addEventListener('click', (e) => {
                 if (e.target === shareModal) {
                     this.hideShareModal();
+                }
+            });
+        }
+
+        // Toggle sidebar button
+        const toggleSidebarBtn = document.getElementById('toggle-sidebar');
+        if (toggleSidebarBtn) {
+            toggleSidebarBtn.addEventListener('click', () => this.toggleSidebar());
+        }
+
+        // Settings button and dropdown
+        const settingsBtn = document.getElementById('settings-btn');
+        const settingsDropdown = document.getElementById('settings-dropdown');
+        
+        if (settingsBtn && settingsDropdown) {
+            settingsBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                settingsDropdown.classList.toggle('hidden');
+            });
+
+            // Close dropdown when clicking outside
+            document.addEventListener('click', (e) => {
+                if (!settingsDropdown.contains(e.target) && !settingsBtn.contains(e.target)) {
+                    settingsDropdown.classList.add('hidden');
+                }
+            });
+        }
+
+        // Expand all files checkbox
+        const expandAllCheckbox = document.getElementById('expand-all-files');
+        if (expandAllCheckbox) {
+            expandAllCheckbox.addEventListener('change', (e) => {
+                this.expandAllFiles = e.target.checked;
+                this.saveSettings();
+                if (this.currentDiff) {
+                    this.renderDiff(this.currentDiff);
                 }
             });
         }
@@ -244,6 +283,14 @@ window.DiffViewer = {
 
         // Update stats display
         this.updateStatsDisplay(diffData.stats);
+
+        // Populate sidebar
+        this.populateSidebar(diffData.files);
+
+        // Auto-show sidebar if there are multiple files
+        if (diffData.files.length > 1 && !this.sidebarVisible) {
+            this.toggleSidebar();
+        }
     },
 
     /**
@@ -252,16 +299,43 @@ window.DiffViewer = {
     renderUnifiedView(diffData) {
         let html = '';
 
-        diffData.files.forEach(file => {
-            html += '<div class="unified-file-container">';
-            html += this.renderFileHeader(file);
+        diffData.files.forEach((file, index) => {
+            const stats = this.getFileStats(file);
+            const fileName = file.newPath || file.oldPath || 'Unknown file';
+            const isCollapsed = !this.expandAllFiles;
+            
+            // Add anchor for navigation
+            html += `<div class="unified-file-container diff-file-anchor" id="file-${index}">`;
+            
+            // Collapsible header
+            html += `<div class="file-collapse-header" onclick="window.DiffViewer.toggleFileCollapse(${index})">`;
+            html += `<div class="file-collapse-toggle">`;
+            html += `<svg class="file-collapse-icon ${isCollapsed ? 'collapsed' : ''}" id="collapse-icon-${index}" fill="none" stroke="currentColor" viewBox="0 0 24 24">`;
+            html += `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>`;
+            html += `</svg>`;
+            html += `<span class="mr-2">${this.getFileTypeIcon(window.DiffParser.getFileType(fileName))}</span>`;
+            html += `<span>${this.escapeHtml(fileName)}</span>`;
+            html += `</div>`;
+            html += `<div class="file-stats-badge">`;
+            if (stats.additions > 0) {
+                html += `<span class="file-stats-additions">+${stats.additions}</span>`;
+            }
+            if (stats.deletions > 0) {
+                html += `<span class="file-stats-deletions">-${stats.deletions}</span>`;
+            }
+            html += `</div>`;
+            html += `</div>`;
+            
+            // Collapsible content
+            html += `<div class="file-collapse-content ${isCollapsed ? 'collapsed' : ''}" id="file-content-${index}">`;
             
             file.hunks.forEach(hunk => {
                 html += this.renderHunkHeader(hunk);
                 html += this.renderHunkLinesUnified(hunk);
             });
             
-            html += '</div>';
+            html += '</div>'; // Close file-collapse-content
+            html += '</div>'; // Close unified-file-container
         });
 
         return html;
@@ -293,12 +367,56 @@ window.DiffViewer = {
         let leftContent = '';
         let rightContent = '';
 
-        diffData.files.forEach(file => {
+        diffData.files.forEach((file, index) => {
             const sideBySideData = this.prepareSideBySideData(file);
+            const stats = this.getFileStats(file);
+            const fileName = file.newPath || file.oldPath || 'Unknown file';
+            const isCollapsed = !this.expandAllFiles;
             
-            // Add file headers
-            leftContent += this.renderFileHeader(file, 'original');
-            rightContent += this.renderFileHeader(file, 'modified');
+            // Add file headers with anchors (collapsible)
+            leftContent += `<div class="diff-file-anchor" id="file-${index}"></div>`;
+            
+            // Left header
+            leftContent += `<div class="file-collapse-header" onclick="window.DiffViewer.toggleFileCollapse(${index})">`;
+            leftContent += `<div class="file-collapse-toggle">`;
+            leftContent += `<svg class="file-collapse-icon ${isCollapsed ? 'collapsed' : ''}" id="collapse-icon-left-${index}" fill="none" stroke="currentColor" viewBox="0 0 24 24">`;
+            leftContent += `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>`;
+            leftContent += `</svg>`;
+            leftContent += `<span class="mr-2">${this.getFileTypeIcon(window.DiffParser.getFileType(fileName))}</span>`;
+            leftContent += `<span>${this.escapeHtml(fileName)}</span>`;
+            leftContent += `</div>`;
+            leftContent += `<div class="file-stats-badge">`;
+            if (stats.additions > 0) {
+                leftContent += `<span class="file-stats-additions">+${stats.additions}</span>`;
+            }
+            if (stats.deletions > 0) {
+                leftContent += `<span class="file-stats-deletions">-${stats.deletions}</span>`;
+            }
+            leftContent += `</div>`;
+            leftContent += `</div>`;
+            
+            // Right header (same collapsible structure as left)
+            rightContent += `<div class="file-collapse-header" onclick="window.DiffViewer.toggleFileCollapse(${index})">`;
+            rightContent += `<div class="file-collapse-toggle">`;
+            rightContent += `<svg class="file-collapse-icon ${isCollapsed ? 'collapsed' : ''}" id="collapse-icon-right-${index}" fill="none" stroke="currentColor" viewBox="0 0 24 24">`;
+            rightContent += `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>`;
+            rightContent += `</svg>`;
+            rightContent += `<span class="mr-2">${this.getFileTypeIcon(window.DiffParser.getFileType(fileName))}</span>`;
+            rightContent += `<span>${this.escapeHtml(fileName)}</span>`;
+            rightContent += `</div>`;
+            rightContent += `<div class="file-stats-badge">`;
+            if (stats.additions > 0) {
+                rightContent += `<span class="file-stats-additions">+${stats.additions}</span>`;
+            }
+            if (stats.deletions > 0) {
+                rightContent += `<span class="file-stats-deletions">-${stats.deletions}</span>`;
+            }
+            rightContent += `</div>`;
+            rightContent += `</div>`;
+            
+            // Start collapsible content
+            leftContent += `<div class="file-collapse-content ${isCollapsed ? 'collapsed' : ''}" id="file-content-left-${index}">`;
+            rightContent += `<div class="file-collapse-content ${isCollapsed ? 'collapsed' : ''}" id="file-content-right-${index}">`;
             
             // Add content ensuring same number of lines
             const maxLines = Math.max(sideBySideData.original.length, sideBySideData.modified.length);
@@ -310,6 +428,10 @@ window.DiffViewer = {
                 leftContent += this.renderSingleLine(leftLine, 'original');
                 rightContent += this.renderSingleLine(rightLine, 'modified');
             }
+            
+            // Close collapsible content
+            leftContent += '</div>';
+            rightContent += '</div>';
         });
 
         // Insert content and close
@@ -321,6 +443,7 @@ window.DiffViewer = {
         setTimeout(() => {
             this.setupScrollSync();
             this.synchronizeHeights();
+            this.setupSideBySideCollapse();
         }, 100);
         
         return html;
@@ -685,6 +808,18 @@ window.DiffViewer = {
             return;
         }
 
+        // Check if any files are individually collapsed/expanded
+        const collapsedFiles = document.querySelectorAll('.file-collapse-content.collapsed');
+        const expandedFiles = document.querySelectorAll('.file-collapse-content:not(.collapsed)');
+        
+        // If we have mixed states (some collapsed, some expanded), allow natural heights
+        if (collapsedFiles.length > 0 && expandedFiles.length > 0) {
+            leftPanel.style.height = 'auto';
+            rightPanel.style.height = 'auto';
+            return;
+        }
+
+        // Only synchronize when all files are in the same state
         // Reset any forced heights
         leftPanel.style.height = 'auto';
         rightPanel.style.height = 'auto';
@@ -1168,5 +1303,257 @@ window.DiffViewer = {
         } catch (e) {
             return false;
         }
+    },
+
+    /**
+     * Toggle sidebar visibility
+     */
+    toggleSidebar() {
+        const sidebar = document.getElementById('diff-sidebar');
+        const toggleText = document.getElementById('sidebar-toggle-text');
+        
+        if (!sidebar) return;
+
+        this.sidebarVisible = !this.sidebarVisible;
+        
+        if (this.sidebarVisible) {
+            sidebar.classList.remove('hidden');
+            if (toggleText) {
+                toggleText.textContent = 'Hide Files';
+            }
+        } else {
+            sidebar.classList.add('hidden');
+            if (toggleText) {
+                toggleText.textContent = 'Show Files';
+            }
+        }
+    },
+
+    /**
+     * Populate sidebar with file list
+     */
+    populateSidebar(files) {
+        const sidebarFileList = document.getElementById('sidebar-file-list');
+        const fileCount = document.getElementById('file-count');
+        
+        if (!sidebarFileList) return;
+
+        // Update file count
+        if (fileCount) {
+            fileCount.textContent = `${files.length} file${files.length !== 1 ? 's' : ''}`;
+        }
+
+        // Clear existing content
+        sidebarFileList.innerHTML = '';
+
+        // Populate file list
+        files.forEach((file, index) => {
+            const fileItem = this.createSidebarFileItem(file, index);
+            sidebarFileList.appendChild(fileItem);
+        });
+    },
+
+    /**
+     * Create a sidebar file item element
+     */
+    createSidebarFileItem(file, index) {
+        const fileItem = document.createElement('div');
+        fileItem.className = 'diff-sidebar-file';
+        fileItem.dataset.fileIndex = index;
+
+        // Get file name and stats
+        const fileName = file.newPath || file.oldPath || 'Unknown file';
+        const fileType = window.DiffParser.getFileType(fileName);
+        const stats = this.getFileStats(file);
+
+        // Create icon
+        const icon = document.createElement('span');
+        icon.className = 'diff-sidebar-file-icon';
+        icon.textContent = this.getFileTypeIcon(fileType);
+
+        // Create file name container
+        const nameContainer = document.createElement('div');
+        nameContainer.className = 'flex-1 min-w-0';
+
+        const name = document.createElement('div');
+        name.className = 'diff-sidebar-file-name';
+        name.textContent = fileName;
+
+        // Create stats display
+        const statsContainer = document.createElement('div');
+        statsContainer.className = 'diff-sidebar-file-stats';
+
+        if (stats.additions > 0) {
+            const additions = document.createElement('span');
+            additions.className = 'diff-sidebar-file-additions';
+            additions.textContent = `+${stats.additions}`;
+            statsContainer.appendChild(additions);
+        }
+
+        if (stats.deletions > 0) {
+            const deletions = document.createElement('span');
+            deletions.className = 'diff-sidebar-file-deletions';
+            deletions.textContent = `-${stats.deletions}`;
+            statsContainer.appendChild(deletions);
+        }
+
+        nameContainer.appendChild(name);
+
+        // Add file type badge for new/deleted files
+        if (file.type === 'new' || file.mode?.includes('new file')) {
+            const badge = document.createElement('span');
+            badge.className = 'diff-sidebar-file-badge new';
+            badge.textContent = 'new';
+            nameContainer.appendChild(badge);
+        } else if (file.type === 'deleted' || file.mode?.includes('deleted file')) {
+            const badge = document.createElement('span');
+            badge.className = 'diff-sidebar-file-badge deleted';
+            badge.textContent = 'deleted';
+            nameContainer.appendChild(badge);
+        }
+
+        // Assemble the item
+        fileItem.appendChild(icon);
+        fileItem.appendChild(nameContainer);
+        fileItem.appendChild(statsContainer);
+
+        // Add click handler
+        fileItem.addEventListener('click', () => this.scrollToFile(index));
+
+        return fileItem;
+    },
+
+    /**
+     * Get statistics for a single file
+     */
+    getFileStats(file) {
+        let additions = 0;
+        let deletions = 0;
+
+        file.hunks.forEach(hunk => {
+            hunk.lines.forEach(line => {
+                if (line.type === 'added') {
+                    additions++;
+                } else if (line.type === 'removed') {
+                    deletions++;
+                }
+            });
+        });
+
+        return { additions, deletions };
+    },
+
+    /**
+     * Scroll to a specific file in the diff view
+     */
+    scrollToFile(fileIndex) {
+        const fileElement = document.getElementById(`file-${fileIndex}`);
+        
+        if (fileElement) {
+            // Remove active class from all sidebar items
+            const allItems = document.querySelectorAll('.diff-sidebar-file');
+            allItems.forEach(item => item.classList.remove('active'));
+
+            // Add active class to clicked item
+            const clickedItem = document.querySelector(`.diff-sidebar-file[data-file-index="${fileIndex}"]`);
+            if (clickedItem) {
+                clickedItem.classList.add('active');
+            }
+
+            // Expand the file if it's collapsed
+            const fileContent = document.getElementById(`file-content-${fileIndex}`);
+            const fileContentLeft = document.getElementById(`file-content-left-${fileIndex}`);
+            const fileContentRight = document.getElementById(`file-content-right-${fileIndex}`);
+            
+            // Check unified view
+            if (fileContent && fileContent.classList.contains('collapsed')) {
+                this.toggleFileCollapse(fileIndex);
+            }
+            // Check side-by-side view
+            else if (fileContentLeft && fileContentLeft.classList.contains('collapsed')) {
+                this.toggleFileCollapse(fileIndex);
+            }
+
+            // Scroll to the file
+            fileElement.scrollIntoView({ 
+                behavior: 'smooth', 
+                block: 'start'
+            });
+        }
+    },
+
+    /**
+     * Toggle collapse state of a file
+     */
+    toggleFileCollapse(fileIndex) {
+        const fileContent = document.getElementById(`file-content-${fileIndex}`);
+        const collapseIcon = document.getElementById(`collapse-icon-${fileIndex}`);
+        
+        // For unified view
+        if (fileContent && collapseIcon) {
+            fileContent.classList.toggle('collapsed');
+            collapseIcon.classList.toggle('collapsed');
+        }
+        
+        // For side-by-side view
+        const fileContentLeft = document.getElementById(`file-content-left-${fileIndex}`);
+        const fileContentRight = document.getElementById(`file-content-right-${fileIndex}`);
+        const collapseIconLeft = document.getElementById(`collapse-icon-left-${fileIndex}`);
+        const collapseIconRight = document.getElementById(`collapse-icon-right-${fileIndex}`);
+        
+        if (fileContentLeft && fileContentRight) {
+            fileContentLeft.classList.toggle('collapsed');
+            fileContentRight.classList.toggle('collapsed');
+            
+            // Toggle both collapse icons in side-by-side view
+            if (collapseIconLeft) {
+                collapseIconLeft.classList.toggle('collapsed');
+            }
+            if (collapseIconRight) {
+                collapseIconRight.classList.toggle('collapsed');
+            }
+            
+            // Re-synchronize heights after collapse/expand
+            setTimeout(() => {
+                this.synchronizeHeights();
+            }, 100);
+        }
+    },
+
+    /**
+     * Setup synchronized collapse for side-by-side view
+     */
+    setupSideBySideCollapse() {
+        // Ensure both sides collapse/expand together
+        const leftPanel = document.getElementById('left-panel');
+        const rightPanel = document.getElementById('right-panel');
+        
+        if (leftPanel && rightPanel) {
+            // Already handled by toggleFileCollapse
+        }
+    },
+
+    /**
+     * Save settings to localStorage
+     */
+    saveSettings() {
+        localStorage.setItem('difflense-expand-all-files', this.expandAllFiles.toString());
+    },
+
+    /**
+     * Load settings from localStorage
+     */
+    loadSettings() {
+        const expandAllSetting = localStorage.getItem('difflense-expand-all-files');
+        if (expandAllSetting !== null) {
+            this.expandAllFiles = expandAllSetting === 'true';
+        }
+        
+        // Update checkbox state
+        const expandAllCheckbox = document.getElementById('expand-all-files');
+        if (expandAllCheckbox) {
+            expandAllCheckbox.checked = this.expandAllFiles;
+        }
     }
 };
+

@@ -534,8 +534,42 @@
                 <div class="bg-white rounded-lg shadow-lg overflow-hidden">
                     <div class="bg-gray-50 px-6 py-3 border-b border-gray-200">
                         <div class="flex justify-between items-center">
-                            <h3 class="text-lg font-medium text-gray-900">Diff Results</h3>
-                            <div class="flex gap-2">
+                            <div class="flex items-center gap-4">
+                                <h3 class="text-lg font-medium text-gray-900">Diff Results</h3>
+                                <button id="toggle-sidebar" class="text-sm text-gray-600 hover:text-primary flex items-center gap-1">
+                                    <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+                                    </svg>
+                                    <span id="sidebar-toggle-text">Show Files</span>
+                                </button>
+                            </div>
+                            <div class="flex gap-2 items-center">
+                                <!-- Settings Dropdown -->
+                                <div class="relative">
+                                    <button id="settings-btn" class="text-sm text-gray-600 hover:text-primary flex items-center gap-1" title="Settings">
+                                        <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                        </svg>
+                                    </button>
+                                    <div id="settings-dropdown" class="hidden absolute right-0 mt-2 w-64 bg-white rounded-lg shadow-lg border border-gray-200 z-50">
+                                        <div class="p-3 border-b border-gray-200">
+                                            <h4 class="text-sm font-semibold text-gray-900">Display Settings</h4>
+                                        </div>
+                                        <div class="p-3">
+                                            <label class="flex items-start cursor-pointer">
+                                                <div class="flex items-center h-5">
+                                                    <input type="checkbox" id="expand-all-files" class="w-4 h-4 text-primary bg-gray-100 border-gray-300 rounded focus:ring-primary focus:ring-2">
+                                                </div>
+                                                <div class="ml-3">
+                                                    <span class="text-sm font-medium text-gray-900">Expand All Files</span>
+                                                    <p class="text-xs text-gray-500 mt-1">Show all file diffs at once instead of collapsing them</p>
+                                                </div>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="border-l border-gray-300 h-5"></div>
                                 <button id="copy-diff" class="text-sm text-gray-600 hover:text-primary">
                                     Copy to Clipboard
                                 </button>
@@ -548,8 +582,21 @@
                             </div>
                         </div>
                     </div>
-                    <div id="diff-content" class="diff-viewer overflow-x-auto">
-                        <!-- Diff content will be rendered here -->
+                    <div class="flex">
+                        <!-- Sidebar -->
+                        <div id="diff-sidebar" class="diff-sidebar hidden">
+                            <div class="diff-sidebar-header">
+                                <h4 class="text-sm font-semibold text-gray-700">Files Changed</h4>
+                                <span id="file-count" class="text-xs text-gray-500"></span>
+                            </div>
+                            <div id="sidebar-file-list" class="diff-sidebar-content">
+                                <!-- File list will be populated here -->
+                            </div>
+                        </div>
+                        <!-- Diff Content -->
+                        <div id="diff-content" class="diff-viewer overflow-x-auto flex-1">
+                            <!-- Diff content will be rendered here -->
+                        </div>
                     </div>
                 </div>
             </div>
