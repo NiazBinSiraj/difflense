@@ -9,8 +9,12 @@ A clean, secure, and privacy-focused git diff viewer that processes everything c
 - **Clean Interface**: Beautiful, easy-to-read diff visualization
 - **Responsive Design**: Works perfectly on all devices
 - **Multiple View Modes**: Side-by-side and unified diff views
+- **File Navigation Sidebar**: Quick navigation for diffs with multiple files (sticky/fixed)
+- **Collapsible Files**: Expand/collapse individual files or all at once
+- **Customizable Display**: Settings to control how diffs are displayed
 - **File Support**: Upload diff files or paste content directly
 - **Syntax Highlighting**: Clean code highlighting with line numbers
+- **Smart File Stats**: View additions and deletions per file
 - **Open Source**: Free and open source forever
 
 ## Live Demo
@@ -46,7 +50,26 @@ DiffLens is a static website project. To run it locally:
 1. **Generate a diff**: Run `git diff` in your repository
 2. **Upload or paste**: Copy the diff output or upload a diff file
 3. **Choose view mode**: Select unified or side-by-side view
-4. **Analyze changes**: Review your code changes with syntax highlighting
+4. **Navigate files**: Use the sidebar to quickly jump to specific files
+5. **Analyze changes**: Review your code changes with syntax highlighting
+
+### File Navigation Sidebar
+
+When viewing diffs with multiple files, DiffLens automatically displays a sidebar that:
+- Lists all changed files with icons
+- Shows additions (+) and deletions (-) per file
+- Highlights new and deleted files with badges
+- Enables quick navigation by clicking on any file
+- Auto-shows when viewing diffs with multiple files
+- Can be toggled using the "Show Files" / "Hide Files" button
+- **Stays fixed** when scrolling through diff content for easy access
+
+### Display Settings
+
+Access the settings menu (⚙️ icon) to customize your diff viewing experience:
+- **Expand All Files**: Toggle to show all file diffs expanded or collapsed by default
+- Settings are automatically saved to your browser's local storage
+- Individual files can be manually collapsed/expanded by clicking their headers
 
 ## Technology Stack
 
